@@ -12,8 +12,8 @@ interface ButtonProps {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-ocean  text-cream hover:bg-deep-blue ",
-  secondary: "bg-cream text-deep-blue hover:bg-sky hover:text-cream",
+  primary: "bg-primary text-white hover:bg-primary-light ",
+  secondary: "bg-surface text-primary hover:bg-secondary ",
 };
 
 const sizeStyles: Record<Size, string> = {
@@ -21,7 +21,8 @@ const sizeStyles: Record<Size, string> = {
   md: "text-sm px-4 py-2 h-10 ",
   lg: "text-base px-6 py-3 h-12",
 };
-const defaultStyles = "rounded-md flex";
+const defaultStyles = "rounded-md flex gap-2 font-semibold justify-center ";
+
 export const Button = ({
   variant,
   size,
@@ -36,12 +37,10 @@ export const Button = ({
       onClick={onClick}
     >
       {startIcon ? (
-        <div className="pr-2 flex items-center ">{startIcon}</div>
+        <div className=" flex items-center  ">{startIcon}</div>
       ) : null}
       <div className="flex self-center items-center ">{text}</div>
-      {endIcon ? (
-        <div className="pl-2 flex items-center ">{endIcon}</div>
-      ) : null}
+      {endIcon ? <div className=" flex items-center ">{endIcon}</div> : null}
     </button>
   );
 };

@@ -1,11 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Bebas+Neue&family=Cal+Sans&family=PT+Sans+Narrow:wght@400;700&display=swap");
 @import "tailwindcss";
-
 @theme {
+  --font-cal: "Cal Sans", sans-serif;
+  --font-babas: "Bebas Neue", sans-serif;
+  --font-anton: "Anton", sans-serif;
+  --font-barlow: "Barlow Condensed", sans-serif;
+
   /* --color-*: initial; */
-  --color-deep-blue: #213448;
-  --color-ocean: #547792;
-  --color-sky: #94b4c1;
-  --color-cream: #ecefca;
+  /* --color-deep-blue: #213448; */
+  --color-primary: #3a59d1;
+  --color-primary-light: #3d90d7;
+  --color-secondary: #a1e3f9;
+  --color-surface: #d1f8ef;
+  --color-surface-light: #f4fdfb;
+  --color-border: #e2e8f0;
+  --color-border-dark: #cbd5e1;
+
+  --color-success: #10b981;
+  --color-success-bg: #d1fae5;
+  /* --color-success-text: #065f46; */
+
+  --color-danger: #ef4444;
+  --color-danger-bg: #fee2e2;
+  /* --color-danger-text: #7f1d1d; */
+
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  /* --color-warning-text: #78350f; */
+
+  --color-info: #3b82f6;
+  --color-info-bg: #dbeafe;
+  /* --color-info-text: #1e3a8a; */
 }
 
 /* --color-red-50: oklch(0.971 0.013 17.38);

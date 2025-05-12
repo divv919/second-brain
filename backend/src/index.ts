@@ -5,10 +5,20 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { User, Tag, Content, ShareLink, mongoose } from "./db";
 import authMiddleware from "./authMiddleware";
+import * as cheerio from "cheerio";
+import cors from "cors";
+import axios from "axios";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+app.use((req, res, next) => {
+  console.log("Incoming Content-Type:", req.headers["content-type"]);
+  console.log("Body:", req.body);
+  next();
+});
 
 app.post("/api/v1/signup", async (req, res) => {
   const { username, password } = req.body;
@@ -84,10 +94,20 @@ app.post("/api/v1/signin", async (req, res) => {
   }
 });
 app.get("/api/v1/content", authMiddleware, async (req, res) => {
+  const type = req.query.type;
+  console.log("type : ", type);
+
+  const filter: { userId?: string; type?: string | {} } = {
+    userId: req.userId,
+  };
+  if (type === "youtube" || type === "tweet") {
+    filter.type = type;
+  } else if (type === "other") {
+    filter.type = { $nin: ["tweet", "youtube"] };
+  }
+  console.log(filter);
   try {
-    const result = await Content.find({
-      userId: req.userId,
-    }).populate("tags");
+    const result = await Content.find(filter).populate("tags");
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ message: err });
@@ -95,11 +115,12 @@ app.get("/api/v1/content", authMiddleware, async (req, res) => {
 });
 app.post("/api/v1/content", authMiddleware, async (req, res) => {
   const { type, link, title, tags } = req.body;
+
   try {
     const tagIds = await Promise.all(
       tags.map(async (tag: string) => {
         const tagExists = await Tag.findOne({ name: tag });
-        console.log(typeof tagExists);
+        // console.log(typeof tagExists);
         if (tagExists) {
           return tagExists._id;
         }
@@ -107,6 +128,7 @@ app.post("/api/v1/content", authMiddleware, async (req, res) => {
         return createdTag._id;
       })
     );
+
     const result = await Content.create({
       userId: req.userId,
       type: type,
@@ -118,6 +140,7 @@ app.post("/api/v1/content", authMiddleware, async (req, res) => {
       .status(200)
       .json({ message: "Content added successfully", content: result });
   } catch (err) {
+    // console.log("Error posting contnet", err);
     res.status(500).json({ message: err });
   }
 });
@@ -224,4 +247,37 @@ app.put("/api/v1/content/:contentId", authMiddleware, async (req, res) => {
     res.status(500).json({ message: err });
   }
 });
-app.listen(process.env.PORT);
+
+app.get("/api/v1/preview", async (req, res) => {
+  const url = req.query.url as string;
+  let response;
+  try {
+    response = await axios.get(url, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+  } catch (err) {
+    console.log("error making get request to url", err);
+    res.status(500).json({ message: "error making get request to url" });
+    return;
+  }
+  const html = response.data;
+  const $ = cheerio.load(html);
+  const title =
+    $("title").text() ||
+    $('meta[name="twitter:title"]').attr("content") ||
+    null;
+  const description =
+    $('meta[name="description"]').attr("content") ||
+    $('meta[property="og:description"]').attr("content") ||
+    null;
+  const img =
+    $('meta[property="og:image"]').attr("content") ||
+    $('meta[name="twitter:image"]').attr("content") ||
+    null;
+
+  res.status(200).json({ title, description, img });
+});
+
+app.listen(process.env.PORT, () => {
+  console.log("Listening at port : ", process.env.PORT);
+});

@@ -9,6 +9,7 @@ import YoutubeLinksPage from "./pages/YoutubeLinksPage";
 import OtherLinksPage from "./pages/OtherLinksPage";
 import TwitterLinksPage from "./pages/TwitterLinksPage";
 import SharedBrainPage from "./pages/SharedBrainPage";
+import TagsPage from "./pages/TagsPage";
 export default function App() {
   return (
     <BrowserRouter>
@@ -19,6 +20,8 @@ export default function App() {
         <Route path="/home" element={<HomeLayout />}>
           <Route index element={<Navigate to="dashboard" />} />
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="tags" element={<TagsPage />} />
+
           <Route path="twitter" element={<TwitterLinksPage />} />
           <Route path="youtube" element={<YoutubeLinksPage />} />
           <Route path="other" element={<OtherLinksPage />} />

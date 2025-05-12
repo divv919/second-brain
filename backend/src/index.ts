@@ -103,14 +103,19 @@ app.post("/api/v1/signin", async (req, res) => {
 app.get("/api/v1/content", authMiddleware, async (req, res) => {
   const type = req.query.type;
   console.log("type : ", type);
+  console.log("value : ", req.query.value);
 
-  const filter: { userId?: string; type?: string | {} } = {
+  const filter: { userId?: string; type?: string | {}; tags?: {} } = {
     userId: req.userId,
   };
   if (type === "youtube" || type === "tweet") {
     filter.type = type;
   } else if (type === "other") {
     filter.type = { $nin: ["tweet", "youtube"] };
+  } else if (type === "tag") {
+    const tagId = await Tag.findOne({ name: req.query.value });
+    console.log(tagId);
+    filter.tags = tagId?._id || 123;
   }
   console.log(filter);
   try {
@@ -264,6 +269,49 @@ app.put("/api/v1/content/:contentId", authMiddleware, async (req, res) => {
   }
 });
 
+app.get("/api/v1/mostUsedTags", authMiddleware, async (req, res) => {
+  try {
+    const tagCounts = await Content.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(req.userId),
+        },
+      },
+      {
+        $unwind: "$tags",
+      },
+      {
+        $group: {
+          _id: "$tags",
+          totalQuantity: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          totalQuantity: -1,
+        },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
+
+    const populated = await Promise.all(
+      tagCounts.map(async ({ _id, totalQuantity }) => {
+        const tag = await Tag.findById(_id);
+        return {
+          tagId: _id,
+          tagName: tag?.name || "Unknown",
+          totalQuantity,
+        };
+      })
+    );
+
+    res.status(200).json(populated);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
 app.get("/api/v1/preview", async (req, res) => {
   const url = req.query.url as string;
   let response;

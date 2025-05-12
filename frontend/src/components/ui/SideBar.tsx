@@ -7,9 +7,19 @@ import { SideBarItem } from "./SideBarItem";
 import { useLocation } from "react-router-dom";
 import { Tag } from "./Tag";
 import { useNavigate } from "react-router-dom";
+import { useFetch } from "../../hooks/useFetch";
+
+interface TagData {
+  tagId: string;
+  tagName: string;
+  totalQuantity: number;
+}
 export const SideBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { data, error, loading, refetch } = useFetch<TagData[]>(
+    "http://localhost:3000/api/v1/mostUsedTags"
+  );
   return (
     <div className="w-1/5 h-screen fixed flex flex-col gap-6  shadow-md border-r-1 border-surface ">
       <div className="flex gap-3 p-5 border-b-2 border-gray-200 cursor-pointer">
@@ -54,11 +64,11 @@ export const SideBar = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="text-sm text-gray-600">TAGS</div>
+          <div className="text-sm text-gray-600">MOST USED TAGS</div>
           <div className="flex flex-wrap gap-2">
-            <Tag tagText="productivity" />
-            <Tag tagText="new" />
-            <Tag tagText="hacks" />
+            {data?.map((tag) => (
+              <Tag tagText={tag.tagName}></Tag>
+            ))}
           </div>
         </div>
       </div>

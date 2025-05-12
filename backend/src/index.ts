@@ -10,9 +10,16 @@ import cors from "cors";
 import axios from "axios";
 
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    optionsSuccessStatus: 200,
+    credentials: true,
+    // some legacy browsers (IE11, various SmartTVs) choke on 204
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
 app.use((req, res, next) => {
   console.log("Incoming Content-Type:", req.headers["content-type"]);
@@ -114,7 +121,10 @@ app.get("/api/v1/content", authMiddleware, async (req, res) => {
   }
 });
 app.post("/api/v1/content", authMiddleware, async (req, res) => {
+  console.log(req.body);
+
   const { type, link, title, tags } = req.body;
+  // res.set("Access-Control-Allow-Origin", "*");
 
   try {
     const tagIds = await Promise.all(
@@ -162,11 +172,17 @@ app.post("/api/v1/brain/share", authMiddleware, async (req, res) => {
   try {
     const LinkExists = await ShareLink.findOne({ userId: req.userId });
     if (LinkExists) {
-      const changedShareOption = await ShareLink.updateOne(
+      const changedShareOption = await ShareLink.findOneAndUpdate(
         { userId: req.userId },
         { enableShare: toShare }
       );
-      res.status(200).json({ message: "Share options updated successfully" });
+      const toSend: { message: string; link?: string | null } = {
+        message: "Share options updated successfully",
+      };
+      if (changedShareOption?.enableShare) {
+        toSend.link = changedShareOption.hash;
+      }
+      res.status(200).json(toSend);
       return;
     }
     const result = await ShareLink.create({

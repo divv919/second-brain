@@ -17,6 +17,8 @@ interface CardProps {
   }[];
 }
 export const Card = ({ title, type, link, tags }: CardProps) => {
+  const onPopup = () => {};
+
   return (
     <div className="w-95 h-100 size-fit rounded-md shadow-md bg-white p-4 flex flex-col gap-4 ">
       <div className="flex justify-between">
@@ -28,7 +30,9 @@ export const Card = ({ title, type, link, tags }: CardProps) => {
         </div>
         <div className="flex items-center gap-2 text-gray-600 ">
           <div className="hover:text-primary cursor-pointer">
-            <OpenInTabIcon size="lg" />
+            <a href={link}>
+              <OpenInTabIcon size="lg" />
+            </a>
           </div>
           <div className="hover:text-primary cursor-pointer">
             <ShareIcon size="lg" />
@@ -50,7 +54,6 @@ export const Card = ({ title, type, link, tags }: CardProps) => {
 
       <div className="flex w-full flex-wrap gap-2">
         {tags?.map((tag, index) => {
-          console.log(tag.name);
           if (index >= 7) {
             return;
           }

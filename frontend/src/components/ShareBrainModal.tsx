@@ -2,7 +2,37 @@ import { CloseIcon } from "../icons/CloseIcon";
 import { CopyIcon } from "../icons/CopyIcon";
 import { Button } from "./ui/Button";
 
-export const ShareBrainModal = ({ onClose }: { onClose: () => void }) => {
+export const ShareBrainModal = ({
+  onClose,
+  totalContents = 0,
+}: {
+  onClose: () => void;
+  totalContents?: number;
+}) => {
+  async function handleCopy() {
+    try {
+      const response = await fetch("http://localhost:3000/api/v1/brain/share", {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          Authorization:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ enableShare: true }),
+      });
+      if (!response.ok) {
+        throw new Error("Error enabling link share");
+      }
+      const json = await response.json();
+      await navigator.clipboard.writeText(
+        "http://localhost:5173/sharedBrain/" + encodeURIComponent(json.link)
+      );
+      alert("link copied");
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-10 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
@@ -26,8 +56,11 @@ export const ShareBrainModal = ({ onClose }: { onClose: () => void }) => {
               variant="primary"
               endIcon={<CopyIcon size="lg" />}
               size="md"
+              onClick={handleCopy}
             />
-            <div className="text-center">(x Contents will be shared)</div>
+            <div className="text-center">
+              {totalContents} Contents will be shared
+            </div>
           </div>
         </div>
       </div>

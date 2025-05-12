@@ -8,12 +8,14 @@ import { Navigate } from "react-router-dom";
 import YoutubeLinksPage from "./pages/YoutubeLinksPage";
 import OtherLinksPage from "./pages/OtherLinksPage";
 import TwitterLinksPage from "./pages/TwitterLinksPage";
+import SharedBrainPage from "./pages/SharedBrainPage";
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/sharedBrain/:hash" element={<SharedBrainPage />} />
         <Route path="/home" element={<HomeLayout />}>
           <Route index element={<Navigate to="dashboard" />} />
           <Route path="dashboard" element={<DashboardPage />} />

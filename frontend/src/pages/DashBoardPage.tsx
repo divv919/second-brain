@@ -18,9 +18,6 @@ const DashboardPage = () => {
   const { data, error, loading, refetch } = useFetch<Content[]>(
     "http://localhost:3000/api/v1/content?type=all"
   );
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   if (loading) {
     return <div>Loading</div>;
@@ -29,13 +26,17 @@ const DashboardPage = () => {
     <>
       {currentOpenModal === "add_link" && (
         <AddButtonModal
+          refetch={refetch}
           onClose={() => {
             setCurrentOpenModal("");
           }}
         />
       )}
       {currentOpenModal === "share" && (
-        <ShareBrainModal onClose={() => setCurrentOpenModal("")} />
+        <ShareBrainModal
+          totalContents={data?.length}
+          onClose={() => setCurrentOpenModal("")}
+        />
       )}
       <div className="bg-slate-100 flex flex-col gap-4 min-h-screen p-5">
         <div className="flex justify-between">

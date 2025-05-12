@@ -18,9 +18,9 @@ const TwitterLinksPage = () => {
   const { data, error, loading, refetch } = useFetch<Content[]>(
     "http://localhost:3000/api/v1/content?type=tweet"
   );
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  const allData = useFetch<Content[]>(
+    "http://localhost:3000/api/v1/content?type=all"
+  );
 
   if (loading) {
     return <div>Loading</div>;
@@ -29,13 +29,17 @@ const TwitterLinksPage = () => {
     <>
       {currentOpenModal === "add_link" && (
         <AddButtonModal
+          refetch={refetch}
           onClose={() => {
             setCurrentOpenModal("");
           }}
         />
       )}
       {currentOpenModal === "share" && (
-        <ShareBrainModal onClose={() => setCurrentOpenModal("")} />
+        <ShareBrainModal
+          onClose={() => setCurrentOpenModal("")}
+          totalContents={allData.data?.length}
+        />
       )}
       <div className="bg-slate-100 flex flex-col gap-4 min-h-screen p-5">
         <div className="flex justify-between">

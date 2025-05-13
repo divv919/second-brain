@@ -116,8 +116,11 @@ app.get("/api/v1/content", authMiddleware, async (req, res) => {
     const tagId = await Tag.findOne({ name: req.query.value });
     console.log(tagId);
     filter.tags = tagId?._id || 123;
+  } else if (type !== "all") {
+    res.status(404).json({ message: "No content for this type" });
+    return;
   }
-  console.log(filter);
+
   try {
     const result = await Content.find(filter).populate("tags");
     res.status(200).json(result);
@@ -181,12 +184,17 @@ app.post("/api/v1/brain/share", authMiddleware, async (req, res) => {
         { userId: req.userId },
         { enableShare: toShare }
       );
-      const toSend: { message: string; link?: string | null } = {
+      const toSend: {
+        message: string;
+        link?: string | null;
+        enableShare?: boolean;
+      } = {
         message: "Share options updated successfully",
+        enableShare: changedShareOption?.enableShare,
       };
-      if (changedShareOption?.enableShare) {
-        toSend.link = changedShareOption.hash;
-      }
+      // if (changedShareOption?.enableShare) {
+      toSend.link = changedShareOption?.hash;
+
       res.status(200).json(toSend);
       return;
     }
@@ -202,6 +210,22 @@ app.post("/api/v1/brain/share", authMiddleware, async (req, res) => {
     res.status(500).json({ message: err });
   }
 });
+
+app.get("/api/v1/brain/share", authMiddleware, async (req, res) => {
+  try {
+    const response = await ShareLink.findOne({
+      userId: req.userId,
+    });
+    if (response === null) {
+      res.status(404).json({ message: "User link not found" });
+      return;
+    }
+    res.status(200).json({ shareLink: response?.enableShare });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
+
 app.get("/api/v1/brain/:shareLink", async (req, res) => {
   const { shareLink } = req.params;
   try {

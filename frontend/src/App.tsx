@@ -7,7 +7,7 @@ import DashboardPage from "./pages/DashBoardPage";
 import { Navigate } from "react-router-dom";
 import YoutubeLinksPage from "./pages/YoutubeLinksPage";
 import OtherLinksPage from "./pages/OtherLinksPage";
-import TwitterLinksPage from "./pages/TwitterLinksPage";
+import TwitterLinksPage from "./pages/MainContent";
 import SharedBrainPage from "./pages/SharedBrainPage";
 import TagsPage from "./pages/TagsPage";
 export default function App() {
@@ -15,17 +15,15 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/home"
+          element={<Navigate to="/home/dashboard" replace />}
+        />
+
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/sharedBrain/:hash" element={<SharedBrainPage />} />
-        <Route path="/home" element={<HomeLayout />}>
+        <Route path="/home/:section" element={<HomeLayout />}>
           <Route index element={<Navigate to="dashboard" />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="tags" element={<TagsPage />} />
-
-          <Route path="twitter" element={<TwitterLinksPage />} />
-          <Route path="youtube" element={<YoutubeLinksPage />} />
-          <Route path="other" element={<OtherLinksPage />} />
-          <Route path="tags/:tag" />
         </Route>
       </Routes>
     </BrowserRouter>

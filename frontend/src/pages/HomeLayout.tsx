@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { SideBar } from "../components/ui/SideBar";
+import MainContent from "./MainContent";
 
 export default function HomeLayout() {
   return (
@@ -8,7 +9,7 @@ export default function HomeLayout() {
         <SideBar />
       </div>
       <div className="w-4/5">
-        <Outlet />
+        <MainContent />
       </div>
     </div>
   );

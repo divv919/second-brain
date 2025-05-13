@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { changeToTagFormat } from "../../utils/changeToTagFormat";
 import { CloseIcon } from "../../icons/CloseIcon";
 
 interface InputProps {
   placeholder: string;
   type: string;
-  onChange?: () => void;
+  onChange?: (str: string) => void;
   label: string;
   tags: string[];
   setTags: React.Dispatch<React.SetStateAction<string[]>>;
+  value: string;
 }
+
+interface AllTags {
+  _id: string;
+  name: string;
+}
+
 export const InputTags = ({
   placeholder,
   type,
@@ -17,10 +24,57 @@ export const InputTags = ({
   label,
   tags,
   setTags,
+  value,
 }: InputProps) => {
+  const [allTags, setAllTags] = useState<AllTags[]>([]);
+  const [results, setResults] = useState<(string | undefined)[]>([]);
+  const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
+  const [limitReached, setLimitReached] = useState(false);
+  useEffect(() => {
+    async function getAllTags() {
+      try {
+        const response = await fetch("http://localhost:3000/api/v1/tags", {
+          headers: {
+            Authorization:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Error getting all tags");
+        }
+        const data = await response.json();
+        setAllTags(data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getAllTags();
+  }, []);
+
+  useEffect(() => {
+    if (tags.length >= 5) {
+      setLimitReached(true);
+    } else {
+      setLimitReached(false);
+    }
+  }, [tags]);
+
+  useEffect(() => {
+    const newResults: string[] = [];
+    allTags?.map((tag) => {
+      const query = value.trim();
+      const fullQuery = tag.name;
+      if (fullQuery.includes(query)) {
+        newResults.push(fullQuery);
+      }
+    });
+    setResults(newResults);
+  }, [value]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       // rules :- first sanitize , no duplicates, no empty
+
       const val = changeToTagFormat(
         (e.target as HTMLInputElement).value,
         false
@@ -28,7 +82,8 @@ export const InputTags = ({
       if (val !== "" && !tags.find((tag) => tag === val)) {
         setTags([...tags, val]);
       }
-      (e.target as HTMLInputElement).value = "";
+      // (e.target as HTMLInputElement).value = "";
+      onChange?.("");
     }
   };
 
@@ -59,13 +114,47 @@ export const InputTags = ({
             </div>
           ))}
         </div>
-        <input
-          className=" border-1 border-gray-300 outline-primary p-2 rounded-md w-full"
-          placeholder={placeholder}
-          type={type}
-          onKeyDown={handleKeyDown}
-          onChange={onChange}
-        />
+        <div className="relative">
+          <input
+            className="border-1 border-gray-300 outline-primary p-2 rounded-md w-full"
+            placeholder={
+              limitReached ? "Cannot add more than 5 tags" : placeholder
+            }
+            type={type}
+            onKeyDown={handleKeyDown}
+            onChange={(e) => onChange?.(e.target.value)}
+            value={value}
+            onFocus={() => {
+              setShowSuggestion(true);
+            }}
+            disabled={tags.length >= 5}
+            onBlur={() => {
+              setShowSuggestion(false);
+            }}
+          />
+
+          {!limitReached && !!results.length && showSuggestion && (
+            <div className="rounded-md  absolute w-full flex flex-col gap-1 p-1  border  border-gray-300 bg-surface">
+              {results?.slice(0, 5).map((result) => {
+                // if (index > 5) return;
+                return (
+                  <div
+                    onMouseDown={() => {
+                      if (!tags.find((tag) => tag === result)) {
+                        setTags([...tags, result || ""]);
+                      }
+
+                      onChange?.("");
+                    }}
+                    className="border rounded-md  border-gray-300 p-2 hover:bg-surface   bg-white"
+                  >
+                    {result}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

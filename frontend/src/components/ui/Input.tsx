@@ -1,19 +1,30 @@
 interface InputProps {
-  placeholder: string;
+  placeholder?: string;
   type: string;
-  onChange?: () => void;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement> | null | undefined
+  ) => void;
   label: string;
-  ref: React.Ref<HTMLInputElement>;
+  ref?: React.Ref<HTMLInputElement>;
+  inSameLine?: boolean;
+  checked?: boolean;
+  loading?: boolean;
 }
+
+const checkBoxStyles = "";
+
 export const Input = ({
   placeholder,
   type,
   onChange,
   label,
+  inSameLine = false,
   ref,
+  checked,
+  loading = false,
 }: InputProps) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`gap-2 ${inSameLine ? "flex" : "flex flex-col"}`}>
       <label className="text-sm font-medium text-gray-700">{label}</label>
       <input
         ref={ref}
@@ -21,6 +32,8 @@ export const Input = ({
         placeholder={placeholder}
         type={type}
         onChange={onChange}
+        checked={checked}
+        disabled={loading}
       />
     </div>
   );

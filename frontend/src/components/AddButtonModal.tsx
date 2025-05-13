@@ -45,7 +45,7 @@ export const AddButtonModal = ({
     }
   }
   const [tags, setTags] = useState<string[]>([]);
-
+  const [inputValue, setInputValue] = useState(" ");
   return (
     <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-10 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
@@ -69,17 +69,19 @@ export const AddButtonModal = ({
             placeholder="Link Title"
             label="Title"
           />
-          <InputDropdown
-            ref={contentType}
-            label="Type"
-            options={["Twitter", "Youtube", "Other"]}
-          />
           <InputTags
             type="text"
             placeholder="Enter Tags"
             label="Tags"
             tags={tags}
             setTags={setTags}
+            onChange={setInputValue}
+            value={inputValue}
+          />
+          <InputDropdown
+            ref={contentType}
+            label="Type"
+            options={["Twitter", "Youtube", "Other"]}
           />
         </div>
         <div className="flex justify-end gap-2">

@@ -12,8 +12,8 @@ interface ButtonProps {
 }
 
 const variantStyles: Record<Variant, string> = {
-  primary: "bg-primary text-white hover:bg-primary-light ",
-  secondary: "bg-surface text-primary hover:bg-secondary ",
+  primary: "bg-blue-600 text-blue-50 hover:bg-blue-700 ",
+  secondary: "bg-surface text-primary hover:bg-blue-700 ",
 };
 
 const sizeStyles: Record<Size, string> = {
@@ -21,7 +21,8 @@ const sizeStyles: Record<Size, string> = {
   md: "text-sm px-4 py-2 h-10 ",
   lg: "text-base px-6 py-3 h-12",
 };
-const defaultStyles = "rounded-md flex gap-2 font-semibold justify-center ";
+const defaultStyles =
+  "rounded-md flex gap-2 font-semibold justify-center items-center cursor-pointer";
 
 export const Button = ({
   variant,

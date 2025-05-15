@@ -14,6 +14,7 @@ interface Content {
   type: string;
   title: string;
   tags: { name: string }[];
+  createdAt: string;
 }
 const MainContent = () => {
   const { pathname } = useLocation();
@@ -97,8 +98,16 @@ const MainContent = () => {
           {loading ? (
             <div>Loading</div>
           ) : (
-            data?.map(({ link, title, type, tags }: Content) => {
-              return <Card link={link} title={title} tags={tags} type={type} />;
+            data?.map(({ link, title, type, tags, createdAt }: Content) => {
+              return (
+                <Card
+                  createdAt={createdAt}
+                  link={link}
+                  title={title}
+                  tags={tags}
+                  type={type}
+                />
+              );
             })
           )}
         </div>

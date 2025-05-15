@@ -11,6 +11,8 @@ interface Content {
   link: string;
   type: string;
   title: string;
+  createdAt: string;
+
   tags: { name: string }[];
 }
 const DashboardPage = () => {
@@ -18,7 +20,6 @@ const DashboardPage = () => {
   const { data, error, loading, refetch } = useFetch<Content[]>(
     "http://localhost:3000/api/v1/content?type=all"
   );
-
   if (loading) {
     return <div>Loading</div>;
   }
@@ -63,8 +64,17 @@ const DashboardPage = () => {
         </div>
 
         <div className="flex justify-center gap-4 flex-wrap">
-          {data?.map(({ link, title, type, tags }: Content) => {
-            return <Card link={link} title={title} tags={tags} type={type} />;
+          {data?.map(({ link, title, type, tags, createdAt }: Content) => {
+            console.log(createdAt);
+            return (
+              <Card
+                createdAt={createdAt}
+                link={link}
+                title={title}
+                tags={tags}
+                type={type}
+              />
+            );
           })}
         </div>
       </div>

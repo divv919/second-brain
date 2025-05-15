@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import truncateWords from "../utils/truncateWords";
 
 const OtherPreview = ({ link }: { link: string }) => {
   const [error, setError] = useState(false);
@@ -8,6 +9,8 @@ const OtherPreview = ({ link }: { link: string }) => {
     description: string | null;
     img: string | null;
   }>({ title: null, description: null, img: null });
+  const newWord = data.title?.replace("- YouTube", "");
+  console.log(newWord);
   useEffect(() => {
     const fetchPreviewData = async () => {
       try {
@@ -38,9 +41,19 @@ const OtherPreview = ({ link }: { link: string }) => {
 
   return (
     <div>
-      <img src={data.img === null ? "www.fallbackimage.com" : data.img} />
-      {/* <div>{data.title || "Title not found"}</div> */}
-      <div>{data.description || "Description not found"}</div>
+      <div className="bg-red-200 aspect-16/9 w-full">
+        <img
+          src={
+            data.img === null
+              ? `https://picsum.photos/id/${Math.floor(
+                  Math.random() * 1000
+                )}/800/450`
+              : data.img
+          }
+        />
+      </div>
+      <div>{data.title?.replace("- YouTube", "") || "Title not found"}</div>
+      {/* <div>{truncateWords(data.description || "Description not found", 5)}</div> */}
     </div>
   );
 };

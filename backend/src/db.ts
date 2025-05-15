@@ -5,13 +5,18 @@ const UserSchema = new mongoose.Schema({
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
 });
-const ContentSchema = new mongoose.Schema({
-  type: String,
-  userId: { type: mongoose.Schema.ObjectId, ref: "users", required: true },
-  title: { type: String, required: true },
-  link: { type: String, required: true },
-  tags: [{ type: mongoose.Schema.ObjectId, ref: "tags" }],
-});
+const ContentSchema = new mongoose.Schema(
+  {
+    type: String,
+    userId: { type: mongoose.Schema.ObjectId, ref: "users", required: true },
+    title: { type: String, required: true },
+    link: { type: String, required: true },
+    tags: [{ type: mongoose.Schema.ObjectId, ref: "tags" }],
+  },
+  {
+    timestamps: { createdAt: true, updatedAt: false },
+  }
+);
 
 const TagSchema = new mongoose.Schema({
   name: String,

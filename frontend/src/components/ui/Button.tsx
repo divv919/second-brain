@@ -4,7 +4,7 @@ type Variant = "primary" | "secondary";
 type Size = "sm" | "md" | "lg";
 interface ButtonProps {
   variant: Variant;
-  size: Size;
+  // size: Size;
   text: string;
   endIcon?: ReactElement;
   startIcon?: ReactElement;
@@ -22,11 +22,11 @@ const sizeStyles: Record<Size, string> = {
   lg: "text-base px-6 py-3 h-12",
 };
 const defaultStyles =
-  "rounded-md flex gap-2 font-semibold justify-center items-center cursor-pointer";
+  "rounded-md flex gap-2 font-semibold justify-center items-center cursor-pointer text-xs px-3 py-1 h-8 md:text-sm md:px-4 md:py-2 md:h-10 lg:h-12 lg:py-3 lg:text-base";
 
 export const Button = ({
   variant,
-  size,
+
   text,
   endIcon,
   startIcon,
@@ -34,7 +34,7 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      className={`${variantStyles[variant]} ${sizeStyles[size]} ${defaultStyles}`}
+      className={`${variantStyles[variant]}  ${defaultStyles}`}
       onClick={onClick}
     >
       {startIcon ? (

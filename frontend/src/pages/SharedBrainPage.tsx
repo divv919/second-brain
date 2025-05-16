@@ -12,7 +12,8 @@ const SharedBrainPage = () => {
   const params = useParams();
   console.log(params);
   const { data, loading, error } = useFetch<SharedBrainData>(
-    "http://localhost:3000/api/v1/brain/" + encodeURIComponent(params.hash || 1)
+    "http://localhost:3000/api/v1/brain/" +
+      encodeURIComponent(params.hash || -1)
   );
   return (
     <div>

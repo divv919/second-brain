@@ -1,6 +1,6 @@
 interface InputProps {
   placeholder?: string;
-  type: string;
+  type?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement> | null | undefined
   ) => void;
@@ -15,7 +15,7 @@ const checkBoxStyles = "";
 
 export const Input = ({
   placeholder,
-  type,
+  type = "text",
   onChange,
   label,
   inSameLine = false,

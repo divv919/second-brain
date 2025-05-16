@@ -27,6 +27,8 @@ app.use((req, res, next) => {
   next();
 });
 
+const limit = 9;
+
 app.post("/api/v1/signup", async (req, res) => {
   const { username, password } = req.body;
 
@@ -102,8 +104,7 @@ app.post("/api/v1/signin", async (req, res) => {
 });
 app.get("/api/v1/content", authMiddleware, async (req, res) => {
   const type = req.query.type;
-  console.log("type : ", type);
-  console.log("value : ", req.query.value);
+  const page = Number(req.query.page) || 1;
 
   const filter: { userId?: string; type?: string | {}; tags?: {} } = {
     userId: req.userId,
@@ -122,8 +123,14 @@ app.get("/api/v1/content", authMiddleware, async (req, res) => {
   }
 
   try {
-    const result = await Content.find(filter).populate("tags");
-    res.status(200).json(result);
+    const totalDocuments = await Content.countDocuments(filter);
+    const result = await Content.find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate("tags");
+    res
+      .status(200)
+      .json({ totalPages: Math.ceil(totalDocuments / limit), data: result });
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -163,14 +170,18 @@ app.post("/api/v1/content", authMiddleware, async (req, res) => {
   }
 });
 app.delete("/api/v1/content", authMiddleware, async (req, res) => {
-  const linkId = req.body;
+  const { linkId } = req.body;
+  console.log("linkId  : ", linkId, " type : ", typeof linkId);
   try {
     const result = await Content.findByIdAndDelete(linkId);
     if (result) {
       res.status(200).json({ message: "Content deleted successfully" });
+      return;
     }
     res.status(404).json({ message: "Content not found" });
   } catch (err) {
+    console.log(err);
+
     res.status(500).json({ message: err });
   }
 });
@@ -228,6 +239,7 @@ app.get("/api/v1/brain/share", authMiddleware, async (req, res) => {
 
 app.get("/api/v1/brain/:shareLink", async (req, res) => {
   const { shareLink } = req.params;
+  const page = Number(req.query.page) || 1;
   try {
     const isLinkActive = await ShareLink.findOne({ hash: shareLink }).populate(
       "userId",
@@ -235,12 +247,20 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
     );
 
     if (isLinkActive && isLinkActive.enableShare) {
+      const totalContents = await Content.countDocuments({
+        userId: isLinkActive.userId,
+      });
+      const totalPages = Math.ceil(totalContents / limit);
       const result = await Content.find({
         userId: isLinkActive.userId,
-      }).populate("tags");
-      res
-        .status(200)
-        .json({ userDetails: isLinkActive, contentsByUser: result });
+      })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("tags");
+      res.status(201).json({
+        userDetails: isLinkActive,
+        contentsByUser: { totalPages, data: result },
+      });
       return;
     }
     res.status(404).json({ message: "User not found" });

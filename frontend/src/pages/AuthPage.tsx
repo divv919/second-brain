@@ -3,31 +3,35 @@ import { Input } from "../components/ui/Input";
 import { BrainIcon } from "../icons/BrainIcon";
 export const AuthPage = () => {
   return (
-    <div className="flex flex-col min-h-screen justify-start items-center gap-y-10 font-poppins bg-gradient-to-r from-blue-500 to-blue-900">
-      <div className="text-2xl text-blue-300 py-6 font-extrabold tracking-tight flex gap-2 items-center">
-        <BrainIcon size="lg" /> Second Brain
-      </div>
+    <div className="p-4 flex flex-col min-h-screen justify-start items-center gap-8 lg:gap-16 font-poppins bg-gradient-to-r from-blue-500 to-blue-900">
+      <nav className="text-2xl text-blue-300 py-6 font-extrabold tracking-tight flex gap-2 items-center">
+        <BrainIcon /> Second Brain
+      </nav>
 
-      <div className="flex gap-24 text-blue-950">
-        <div className="tracking-tight font-bold flex flex-col justify-between pb-8 text-8xl text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-300">
-          <div>Personalized </div>
-          <div className="text-7xl">Space for</div>
-          <div className="text-6xl">all your</div>
-          <div className="text-5xl">Links</div>
+      <div className="flex flex-col  items-center lg:items-start  lg:flex-row gap-2 lg:gap-20 text-blue-950">
+        <div className="w-full tracking-tight font-bold flex-col flex text-3xl md:text-3xl lg:flex-col md:flex-row gap-1 md:gap-2 lg:gap-12 justify-between lg:pb-28 items-center lg:items-start text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-300">
+          <div className="lg:text-6xl xl:text-8xl">Personalized </div>
+          <div className="lg:text-5xl xl:text-7xl">Space for</div>
+          <div className="lg:text-4xl xl:text-6xl">all your</div>
+          <div className="lg:text-3xl xl:text-5xl">Links</div>
         </div>
-        <div className="flex flex-col gap-10 p-8 h-120 w-90 bg-blue-50 rounded-2xl">
+        <div className="flex m-12 lg:m-0 w-full flex-col gap-10 p-6 md:p-8 md:h-120 md:w-90 bg-blue-50 rounded-2xl">
           <div className=" text-center flex flex-col gap-1">
             <div className="font-semibold text-3xl">Login</div>
             <div className="text-md font-light">
               Welcome to <span className="text-blue-600">Second Brain</span>
             </div>
           </div>
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8 w-full">
+            <div className="flex flex-col gap-4 ">
               <Input label="Username" placeholder="Enter username" />
-              <Input label="Password" placeholder="Enter password" />
+              <Input
+                label="Password"
+                type="password"
+                placeholder="Enter password"
+              />
             </div>
-            <Button size="md" variant="primary" text="Login" />
+            <Button variant="primary" text="Login" />
             <div className="text-md  text-center">
               <div>Don't have an account?</div>
               <div className="text-blue-600 cursor-pointer">Sign up</div>

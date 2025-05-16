@@ -10,6 +10,7 @@ interface InputProps {
   tags: string[];
   setTags: React.Dispatch<React.SetStateAction<string[]>>;
   value: string;
+  maxLength?: string;
 }
 
 interface AllTags {
@@ -25,6 +26,7 @@ export const InputTags = ({
   tags,
   setTags,
   value,
+  maxLength = "300",
 }: InputProps) => {
   const [allTags, setAllTags] = useState<AllTags[]>([]);
   const [results, setResults] = useState<(string | undefined)[]>([]);
@@ -108,7 +110,7 @@ export const InputTags = ({
                 }}
               >
                 <div className="bg-primary-light text-white  rounded-md">
-                  <CloseIcon size="md" />
+                  <CloseIcon size="sm" />
                 </div>
               </div>
             </div>
@@ -118,7 +120,7 @@ export const InputTags = ({
           <input
             className="border-1 border-gray-300 outline-primary p-2 rounded-md w-full"
             placeholder={
-              limitReached ? "Cannot add more than 5 tags" : placeholder
+              limitReached ? "Cannot add more than 5 tags" : "Enter tags"
             }
             type={type}
             onKeyDown={handleKeyDown}
@@ -127,6 +129,7 @@ export const InputTags = ({
             onFocus={() => {
               setShowSuggestion(true);
             }}
+            maxLength={Number(maxLength)}
             disabled={tags.length >= 5}
             onBlur={() => {
               setShowSuggestion(false);

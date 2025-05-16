@@ -4,7 +4,7 @@ type Variant = "primary" | "secondary";
 type Size = "sm" | "md" | "lg";
 interface ButtonProps {
   variant: Variant;
-  // size: Size;
+  size?: Size;
   text: string;
   endIcon?: ReactElement;
   startIcon?: ReactElement;
@@ -13,7 +13,7 @@ interface ButtonProps {
 
 const variantStyles: Record<Variant, string> = {
   primary: "bg-blue-600 text-blue-50 hover:bg-blue-700 ",
-  secondary: "bg-surface text-primary hover:bg-blue-700 ",
+  secondary: "bg-blue-100 text-blue-600 hover:bg-blue-200 ",
 };
 
 const sizeStyles: Record<Size, string> = {
@@ -26,7 +26,7 @@ const defaultStyles =
 
 export const Button = ({
   variant,
-
+  size,
   text,
   endIcon,
   startIcon,

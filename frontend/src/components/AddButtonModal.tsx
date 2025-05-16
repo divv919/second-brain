@@ -51,23 +51,27 @@ export const AddButtonModal = ({
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
       <div className="fixed w-1/3 min-h-1/2 bg-white p-6 flex flex-col gap-4 rounded-md">
         <div className="flex justify-between border-b border-gray-300 pb-2">
-          <div className="text-lg font-semibold">Add New Link</div>
-          <div onClick={onClose}>
-            <CloseIcon size="lg" />
+          <div className="text-xl font-semibold text-blue-600">
+            Add New Link
+          </div>
+          <div onClick={onClose} className="text-gray-800 cursor-pointer">
+            <CloseIcon size="md" />
           </div>
         </div>
         <div className="flex flex-col gap-4">
           <Input
             ref={contentLink}
-            type="text"
+            type="url"
             placeholder="www.example.com"
             label="URL"
+            maxLength="254"
           />
           <Input
             ref={contentTitle}
             type="text"
             placeholder="Link Title"
             label="Title"
+            maxLength="100"
           />
           <InputTags
             type="text"
@@ -77,6 +81,7 @@ export const AddButtonModal = ({
             setTags={setTags}
             onChange={setInputValue}
             value={inputValue}
+            maxLength="30"
           />
           <InputDropdown
             ref={contentType}

@@ -1,16 +1,17 @@
 import type { IconProps } from ".";
 import { sizeVariants } from ".";
 
-export const BrainIcon = () => {
+export const BrainIcon = ({ size }: IconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      className="size-5 md:size-7 "
+      className={`${(size && sizeVariants[size]) || "size-5 md:size-7"} `}
       viewBox="0 0 463 463"
       stroke="currentColor"
       strokeWidth="15"
       xmlSpace="preserve"
+      preserveAspectRatio="xMidYMid meet"
       fill="none"
     >
       <g>

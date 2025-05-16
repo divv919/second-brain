@@ -149,15 +149,17 @@ export const ShareBrainModal = ({
     <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-10 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
 
-      <div className="fixed w-1/3 min-h-1/2 bg-white p-6 flex flex-col gap-4 rounded-md">
+      <div className="fixed w-1/3 min-h-1/2 bg-white p-6 flex flex-col gap-8 rounded-md">
         <div className="flex justify-between border-b border-gray-300 pb-2">
-          <div className="text-lg font-semibold">Share Your Second Brain</div>
-          <div onClick={onClose}>
-            <CloseIcon size="lg" />
+          <div className="text-xl font-semibold text-blue-600">
+            Share Your Second Brain
+          </div>
+          <div className="text-gray-800 cursor-pointer" onClick={onClose}>
+            <CloseIcon size="md" />
           </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <div className="w-full break-words text-gray-800 ">
+        <div className="flex flex-col gap-8">
+          <div className="w-full break-words text-gray-800 text-md ">
             Share your entire contents of Notes, Documents, Tweets and Video
             links stored in your Second Brain with others. <br />
             Person with the link will be able to see and import all your
@@ -175,11 +177,11 @@ export const ShareBrainModal = ({
             <Button
               text="Copy Link"
               variant="primary"
-              endIcon={<CopyIcon size="lg" />}
+              endIcon={<CopyIcon size="md" />}
               size="md"
               onClick={handleCopy}
             />
-            <div className="text-center">
+            <div className="text-center text-gray-800 text-md">
               {totalContents} Contents will be shared
             </div>
           </div>

@@ -35,6 +35,148 @@
   /* --color-info-text: #1e3a8a; */
 }
 
+@layer utilities {
+  /* Hide scrollbar arrows but keep the scrollbar itself */
+  .hide-scrollbar-arrows {
+    /* For Webkit browsers (Chrome, Safari, newer Edge) */
+    &::-webkit-scrollbar-button:single-button {
+      background-color: transparent;
+      display: none;
+      height: 0;
+      width: 0;
+    }
+
+    &::-webkit-scrollbar-button:single-button:horizontal:decrement,
+    &::-webkit-scrollbar-button:single-button:horizontal:increment,
+    &::-webkit-scrollbar-button:single-button:vertical:decrement,
+    &::-webkit-scrollbar-button:single-button:vertical:increment {
+      display: none;
+      height: 0;
+      width: 0;
+    }
+
+    /* Style the scrollbar itself */
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+    }
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+}
+
+.no-arrows::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.no-arrows::-webkit-scrollbar {
+  width: 6px;
+}
+
+.no-arrows::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.no-arrows::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+/* Firefox */
+.no-arrows {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Target scrollbar arrows specifically */
+.remove-scroll-arrows::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Target the up/down buttons specifically */
+.remove-scroll-arrows::-webkit-scrollbar-button:vertical:start:decrement,
+.remove-scroll-arrows::-webkit-scrollbar-button:vertical:end:increment {
+  display: none;
+}
+
+/* Target the left/right buttons specifically */
+.remove-scroll-arrows::-webkit-scrollbar-button:horizontal:start:decrement,
+.remove-scroll-arrows::-webkit-scrollbar-button:horizontal:end:increment {
+  display: none;
+}
+
+/* Style the scrollbar itself */
+.remove-scroll-arrows::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.remove-scroll-arrows::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+/* Firefox */
+.remove-scroll-arrows {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Nuclear option for scrollbar arrows */
+.nuke-arrows {
+  /* Basic scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  /* Target every possible button variation */
+  &::-webkit-scrollbar-button,
+  &::-webkit-scrollbar-button:start,
+  &::-webkit-scrollbar-button:end,
+  &::-webkit-scrollbar-button:single-button,
+  &::-webkit-scrollbar-button:double-button,
+  &::-webkit-scrollbar-button:horizontal:start:decrement,
+  &::-webkit-scrollbar-button:horizontal:end:increment,
+  &::-webkit-scrollbar-button:vertical:start:decrement,
+  &::-webkit-scrollbar-button:vertical:end:increment,
+  &::-webkit-scrollbar-button:vertical:decrement:active,
+  &::-webkit-scrollbar-button:vertical:increment:active,
+  &::-webkit-scrollbar-button:horizontal:decrement:active,
+  &::-webkit-scrollbar-button:horizontal:increment:active {
+    display: none !important;
+    background: transparent !important;
+    width: 0 !important;
+    height: 0 !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
 /* --color-red-50: oklch(0.971 0.013 17.38);
   --color-red-100: oklch(0.936 0.032 17.717);
   --color-red-200: oklch(0.885 0.062 18.334);

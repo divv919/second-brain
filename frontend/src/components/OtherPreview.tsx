@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import truncateWords from "../utils/truncateWords";
+import Fallback from "./ui/Fallback";
 
 const OtherPreview = ({ link }: { link: string }) => {
   const [error, setError] = useState(false);
@@ -33,7 +34,11 @@ const OtherPreview = ({ link }: { link: string }) => {
     fetchPreviewData();
   }, [link]);
   if (error) {
-    return <div>Error Fetching link preview</div>;
+    return (
+      <div className="h-full">
+        <Fallback text="No Preview" />
+      </div>
+    );
   }
   if (loading) {
     return <div>Loading preview</div>;
@@ -41,7 +46,7 @@ const OtherPreview = ({ link }: { link: string }) => {
 
   return (
     <div>
-      <div className="bg-red-200 aspect-16/9 w-full">
+      <div className=" aspect-16/9 w-full">
         <img
           src={
             data.img === null
@@ -52,7 +57,7 @@ const OtherPreview = ({ link }: { link: string }) => {
           }
         />
       </div>
-      <div>{data.title?.replace("- YouTube", "") || "Title not found"}</div>
+      {/* <div>{data.title?.replace("- YouTube", "") || "Title not found"}</div> */}
       {/* <div>{truncateWords(data.description || "Description not found", 5)}</div> */}
     </div>
   );

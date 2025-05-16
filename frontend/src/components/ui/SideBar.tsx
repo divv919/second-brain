@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import { Tag } from "./Tag";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../hooks/useFetch";
+import Logout from "../../icons/LogoutIcon";
 
 interface TagData {
   tagId: string;
@@ -21,19 +22,19 @@ export const SideBar = () => {
     "http://localhost:3000/api/v1/mostUsedTags"
   );
   return (
-    <div className="w-1/5 h-screen fixed flex flex-col gap-6  shadow-md border-r-1 border-surface ">
-      <div className="flex gap-3 p-5 border-b-2 border-gray-200 cursor-pointer">
+    <div className="w-1/5 h-screen fixed flex flex-col gap-6  shadow-md  ">
+      <div className="flex gap-3 p-6 border-b-2 border-gray-200 cursor-pointer text-blue-600">
         <div className="flex justify-center items-center ">
-          <BrainIcon size="xl" />
+          <BrainIcon />
         </div>
-        <div className="flex text-2xl  items-center font-bold">
+        <div className="flex text-3xl   items-center font-extrabold tracking-tighter ">
           Second Brain
         </div>
       </div>
       <div className="flex flex-col gap-6 px-6">
         <div className="flex flex-col gap-4">
           <SideBarItem
-            icon={<HomeIcon size="lg" />}
+            icon={<HomeIcon size="md" />}
             title="Dashboard"
             isActive={location.pathname === "/home/dashboard"}
             onClick={() => navigate("/home/dashboard")}
@@ -44,32 +45,35 @@ export const SideBar = () => {
           <div className="flex flex-col gap-6">
             <SideBarItem
               isActive={location.pathname === "/home/twitter"}
-              icon={<TwitterIcon size="lg" />}
+              icon={<TwitterIcon size="md" />}
               title="Twitter"
               onClick={() => navigate("/home/twitter")}
             />
             <SideBarItem
               isActive={location.pathname === "/home/youtube"}
-              icon={<YoutubeIcon size="lg" />}
+              icon={<YoutubeIcon size="md" />}
               title="Youtube"
               onClick={() => navigate("/home/youtube")}
             />
             <SideBarItem
               isActive={location.pathname === "/home/other"}
-              icon={<LinkIcon size="lg" />}
+              icon={<LinkIcon size="md" />}
               title="Others"
               onClick={() => navigate("/home/other")}
             />
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           <div className="text-sm text-gray-600">MOST USED TAGS</div>
           <div className="flex flex-wrap gap-2">
             {data?.map((tag) => (
               <Tag tagText={tag.tagName}></Tag>
             ))}
           </div>
+        </div>
+        <div>
+          <SideBarItem icon={<Logout size="md" />} title="Logout" />
         </div>
       </div>
       <div></div>

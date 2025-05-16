@@ -9,6 +9,7 @@ interface InputProps {
   inSameLine?: boolean;
   checked?: boolean;
   loading?: boolean;
+  maxLength?: string;
 }
 
 const checkBoxStyles = "";
@@ -22,6 +23,7 @@ export const Input = ({
   ref,
   checked,
   loading = false,
+  maxLength = "300",
 }: InputProps) => {
   return (
     <div className={`gap-2 ${inSameLine ? "flex" : "flex flex-col"}`}>
@@ -34,6 +36,7 @@ export const Input = ({
         onChange={onChange}
         checked={checked}
         disabled={loading}
+        maxLength={Number(maxLength)}
       />
     </div>
   );

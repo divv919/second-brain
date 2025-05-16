@@ -12,14 +12,14 @@ export const SideBarItem = ({
   isActive?: boolean;
   onClick?: () => void;
 }) => {
-  const activeStyles = isActive ? "bg-surface text-primary" : "";
+  const activeStyles = isActive ? "bg-blue-100 text-blue-600" : "text-gray-600";
   return (
     <div
       onClick={onClick}
-      className={`flex gap-3 text-gray-700 hover:bg-surface rounded-md p-2 hover:text-primary cursor-pointer ${activeStyles}`}
+      className={`flex items-center text-md gap-3 hover:bg-blue-100 rounded-md p-2 hover:text-blue-600 cursor-pointer ${activeStyles}`}
     >
-      <div className="flex items-center ">{icon}</div>
-      <div className="text-lg font-medium ">{title}</div>
+      <div className="flex ">{icon}</div>
+      <div className="text-lg font-regular ">{title}</div>
     </div>
   );
 };

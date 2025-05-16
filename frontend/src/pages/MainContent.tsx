@@ -8,6 +8,7 @@ import { PlusIcon } from "../icons/PlusIcon";
 import { ShareIcon } from "../icons/ShareIcon";
 import { useLocation } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import Paginate from "../components/Paginate";
 
 interface Content {
   link: string;
@@ -15,11 +16,16 @@ interface Content {
   title: string;
   tags: { name: string }[];
   createdAt: string;
+  _id: string;
+}
+interface Data {
+  totalPages: number;
+  data: Content[];
 }
 const MainContent = () => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
-
+  const [currentPage, setCurrentPage] = useState<number>(1);
   let urlFrag;
   let titleToShow;
 
@@ -43,13 +49,35 @@ const MainContent = () => {
     titleToShow = "invalid";
   }
   const [currentOpenModal, setCurrentOpenModal] = useState<string>("");
-  const { data, error, loading, refetch } = useFetch<Content[]>(
-    "http://localhost:3000/api/v1/content?type=" + urlFrag
+  const { data, error, loading, refetch } = useFetch<Data>(
+    `http://localhost:3000/api/v1/content?type=${urlFrag}&page=${currentPage}`
   );
-  const allData = useFetch<Content[]>(
+  const allData = useFetch<Data>(
     "http://localhost:3000/api/v1/content?type=all"
   );
+  async function handleDelete(id: string) {
+    try {
+      console.log("Delete handler running");
+      const response = await fetch("http://localhost:3000/api/v1/content", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
 
+          Authorization:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+        },
+        body: JSON.stringify({ linkId: id }),
+      });
+      if (!response.ok) {
+        throw new Error("Error deleting content");
+      }
+      const json = await response.json();
+      console.log(json);
+      refetch();
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <>
       {currentOpenModal === "add_link" && (
@@ -63,15 +91,17 @@ const MainContent = () => {
       {currentOpenModal === "share" && (
         <ShareBrainModal
           onClose={() => setCurrentOpenModal("")}
-          totalContents={allData.data?.length}
+          totalContents={allData.data?.data.length}
         />
       )}
-      <div className="bg-slate-100 flex flex-col gap-4 min-h-screen p-5">
+      <div className="bg-slate-100 flex flex-col gap-6 min-h-screen p-6">
         <div className="flex justify-between">
-          <div className="text-2xl font-bold flex gap-2">
+          <div className="text-2xl text-blue-600 font-bold flex gap-2 items-center">
             {titleToShow} Links
             {!loading ? (
-              <div className="text-2xl font-light">({data?.length} links)</div>
+              <div className="text-xl font-light">
+                ({data?.data.length} links)
+              </div>
             ) : (
               <div>Loading</div>
             )}
@@ -94,24 +124,35 @@ const MainContent = () => {
           </div>
         </div>
 
-        <div className="flex justify-center gap-4 flex-wrap">
+        <div className="grid grid-cols-3 gap-6">
           {loading ? (
             <div>Loading</div>
           ) : (
-            data?.map(({ link, title, type, tags, createdAt }: Content) => {
-              return (
-                <Card
-                  createdAt={createdAt}
-                  link={link}
-                  title={title}
-                  tags={tags}
-                  type={type}
-                />
-              );
-            })
+            data?.data.map(
+              ({ link, title, type, tags, createdAt, _id }: Content) => {
+                return (
+                  <Card
+                    createdAt={createdAt}
+                    link={link}
+                    title={title}
+                    tags={tags}
+                    type={type}
+                    onDelete={() => {
+                      console.log("passed success");
+                      handleDelete(_id);
+                    }}
+                  />
+                );
+              }
+            )
           )}
         </div>
       </div>
+      <Paginate
+        totalPages={data?.totalPages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };

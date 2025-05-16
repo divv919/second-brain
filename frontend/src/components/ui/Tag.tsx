@@ -4,7 +4,7 @@ interface TagProps {
   tagText: string;
 }
 const tagStyles =
-  "w-max bg-surface text-primary text-xs p-1 rounded-md cursor-pointer";
+  "w-max bg-blue-100 text-blue-600 text-xs p-1 rounded-md cursor-pointer hover:bg-blue-200";
 
 export const Tag = ({ tagText = "" }: TagProps) => {
   const navigate = useNavigate();

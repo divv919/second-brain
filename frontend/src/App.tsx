@@ -3,13 +3,8 @@ import HomeLayout from "./pages/HomeLayout";
 import { AuthPage } from "./pages/AuthPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import DashboardPage from "./pages/DashBoardPage";
 import { Navigate } from "react-router-dom";
-import YoutubeLinksPage from "./pages/YoutubeLinksPage";
-import OtherLinksPage from "./pages/OtherLinksPage";
-import TwitterLinksPage from "./pages/MainContent";
 import SharedBrainPage from "./pages/SharedBrainPage";
-import TagsPage from "./pages/TagsPage";
 export default function App() {
   return (
     <BrowserRouter>

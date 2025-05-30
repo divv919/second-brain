@@ -5,7 +5,7 @@ import MainContent from "./MainContent";
 export default function HomeLayout() {
   return (
     <div className="flex font-poppins">
-      <div className="w-1/5">
+      <div className="w-1/5 h-screen">
         <SideBar />
       </div>
       <div className="w-4/5">

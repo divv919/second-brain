@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AddButtonModal } from "../components/AddButtonModal";
 import { ShareBrainModal } from "../components/ShareBrainModal";
 import { Button } from "../components/ui/Button";
@@ -49,7 +49,7 @@ const MainContent = () => {
     titleToShow = "invalid";
   }
   const [currentOpenModal, setCurrentOpenModal] = useState<string>("");
-  const { data, error, loading, refetch } = useFetch<Data>(
+  const { data, loading, refetch } = useFetch<Data>(
     `http://localhost:3000/api/v1/content?type=${urlFrag}&page=${currentPage}`
   );
   const allData = useFetch<Data>(
@@ -124,7 +124,7 @@ const MainContent = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="flex justify-center grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-6">
           {loading ? (
             <div>Loading</div>
           ) : (

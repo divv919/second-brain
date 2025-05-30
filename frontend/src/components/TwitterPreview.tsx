@@ -1,4 +1,3 @@
-import { useFetch } from "../hooks/useFetch";
 import { OpenInTabIcon } from "../icons/OpenInTabIcon";
 const TwitterPreview = ({ link }: { link: string }) => {
   return (

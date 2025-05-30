@@ -47,7 +47,7 @@ export const AddButtonModal = ({
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState(" ");
   return (
-    <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-10 items-center">
+    <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-100 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
       <div className="fixed w-1/3 min-h-1/2 bg-white p-6 flex flex-col gap-4 rounded-md">
         <div className="flex justify-between border-b border-gray-300 pb-2">

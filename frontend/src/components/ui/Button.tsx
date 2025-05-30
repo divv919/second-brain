@@ -16,17 +16,17 @@ const variantStyles: Record<Variant, string> = {
   secondary: "bg-blue-100 text-blue-600 hover:bg-blue-200 ",
 };
 
-const sizeStyles: Record<Size, string> = {
-  sm: "text-xs px-3 py-1 h-8  ",
-  md: "text-sm px-4 py-2 h-10 ",
-  lg: "text-base px-6 py-3 h-12",
-};
+// const sizeStyles: Record<Size, string> = {
+//   sm: "text-xs px-3 py-1 h-8  ",
+//   md: "text-sm px-4 py-2 h-10 ",
+//   lg: "text-base px-6 py-3 h-12",
+// };
 const defaultStyles =
-  "rounded-md flex gap-2 font-semibold justify-center items-center cursor-pointer text-xs px-3 py-1 h-8 md:text-sm md:px-4 md:py-2 md:h-10 lg:h-12 lg:py-3 lg:text-base";
+  "rounded-md flex gap-2 font-semibold justify-center items-center cursor-pointer text-xs px-3 py-1 h-8 md:text-sm md:px-3 md:py-2 md:h-10 lg:h-10 lg:py-2 lg:text-base";
 
 export const Button = ({
   variant,
-  size,
+  // size,
   text,
   endIcon,
   startIcon,

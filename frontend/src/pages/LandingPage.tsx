@@ -1,6 +1,6 @@
 import { Button } from "../components/ui/Button";
 import { BrainIcon } from "../icons/BrainIcon";
-
+import { Link } from "react-router-dom";
 const LandingPage = () => {
   return (
     <div className="flex flex-col gap-12 md:gap-12  font-poppins">
@@ -9,7 +9,9 @@ const LandingPage = () => {
           <BrainIcon />
           Second Brain
         </h2>
-        <Button text="Login" variant="primary" />
+        <Link to="/auth">
+          <Button text="Login" variant="primary" />
+        </Link>
       </nav>
 
       <div className="flex flex-col gap-2 md:gap-6 items-center ">
@@ -22,7 +24,9 @@ const LandingPage = () => {
             Save, organize and keep all your content links in one place.
           </div>
         </div>
-        <Button text="Get Started" variant="primary" />
+        <Link to="/auth">
+          <Button text="Get Started" variant="primary" />
+        </Link>
       </div>
 
       <div className="px-8 md:px-10">

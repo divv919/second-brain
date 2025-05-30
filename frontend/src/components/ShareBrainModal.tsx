@@ -146,7 +146,7 @@ export const ShareBrainModal = ({
     }
   }
   return (
-    <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-10 items-center">
+    <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-100 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
 
       <div className="fixed w-1/3 min-h-1/2 bg-white p-6 flex flex-col gap-8 rounded-md">

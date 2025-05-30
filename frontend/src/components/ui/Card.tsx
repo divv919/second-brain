@@ -1,10 +1,9 @@
 import { DeleteIcon } from "../../icons/DeleteIcon";
-import { DownArrowIcon } from "../../icons/DownArrowIcon";
+import { Tweet } from "react-tweet";
 import { OpenInTabIcon } from "../../icons/OpenInTabIcon";
 import { ShareIcon } from "../../icons/ShareIcon";
 import { TwitterIcon } from "../../icons/TwitterIcon";
 import TwitterPreview from "../TwitterPreview";
-import YoutubePreview from "../YoutubePreview";
 import OtherPreview from "../OtherPreview";
 import { Tag } from "./Tag";
 import formatToDate from "../../utils/formatToDate";
@@ -30,11 +29,12 @@ export const Card = ({
   createdAt,
   onDelete,
 }: CardProps) => {
+  console.log(type);
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(link);
     } catch (err) {
-      console.log("error copying");
+      console.log("error copying", err);
     }
   };
   console.log("console from card : ", createdAt);
@@ -43,7 +43,7 @@ export const Card = ({
       <div className="flex justify-between  w-full">
         <div className="flex items-center gap-2  ">
           <div className="text-gray-600">
-            {type === "tweet" && <TwitterIcon size="md" />}
+            {type === "twitter" && <TwitterIcon size="md" />}
             {type === "youtube" && <YoutubeIcon size="md" />}
 
             {type === "other" && <LinkIcon size="md" />}
@@ -83,8 +83,18 @@ export const Card = ({
         </div>
       </div>
       <div className="aspect-16/9 w-full rounded-md overflow-hidden">
-        {type === "tweet" ? (
-          <TwitterPreview link={link} />
+        {type === "twitter" ? (
+          // <TwitterPreview link={link} />
+          <div className="w-full h-full relative">
+            <div className=" w-full h-full bg-gradient-to-t from-white from-0% to-99% to-transparent absolute z-100">
+              <div className="absolute bottom-5 left-1/2 cursor-pointer text-gray-600">
+                <OpenInTabIcon size="md" />
+              </div>
+            </div>
+            <div className="light mt-[-20px] ">
+              <Tweet id="1928484936417255711" />
+            </div>
+          </div>
         ) : (
           <OtherPreview link={link} />
         )}

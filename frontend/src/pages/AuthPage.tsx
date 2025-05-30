@@ -1,7 +1,12 @@
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { BrainIcon } from "../icons/BrainIcon";
+import { useState } from "react";
 export const AuthPage = () => {
+  const [newUser, setNewUser] = useState(false);
+  const handleSubmit = ()=>{
+    
+  }
   return (
     <div className="p-4 flex flex-col min-h-screen justify-start items-center gap-8 lg:gap-16 font-poppins bg-gradient-to-r from-blue-500 to-blue-900">
       <nav className="text-2xl text-blue-300 py-6 font-extrabold tracking-tight flex gap-2 items-center">
@@ -17,7 +22,9 @@ export const AuthPage = () => {
         </div>
         <div className="flex m-12 lg:m-0 w-full flex-col gap-10 p-6 md:p-8 md:h-120 md:w-90 bg-blue-50 rounded-2xl">
           <div className=" text-center flex flex-col gap-1">
-            <div className="font-semibold text-3xl">Login</div>
+            <div className="font-semibold text-3xl">
+              {newUser ? "Sign up" : "Login"}
+            </div>
             <div className="text-md font-light">
               Welcome to <span className="text-blue-600">Second Brain</span>
             </div>
@@ -31,10 +38,19 @@ export const AuthPage = () => {
                 placeholder="Enter password"
               />
             </div>
-            <Button variant="primary" text="Login" />
+            <Button variant="primary" text={newUser ? "Sign up" : "Login"} onClick={handleSubmit} />
             <div className="text-md  text-center">
-              <div>Don't have an account?</div>
-              <div className="text-blue-600 cursor-pointer">Sign up</div>
+              <div>
+                {newUser
+                  ? "Already have an account?"
+                  : "Don't have an account?"}
+              </div>
+              <div
+                className="text-blue-600 cursor-pointer"
+                onClick={() => setNewUser((prev) => !prev)}
+              >
+                {newUser ? "Login" : "Sign up"}
+              </div>
             </div>
           </div>
         </div>

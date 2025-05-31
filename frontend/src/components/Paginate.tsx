@@ -6,7 +6,8 @@ interface PaginateProps {
   setCurrentPage: (page: number) => void;
 }
 
-const pageContainerStyles = "p-4 mb-2 flex justify-center gap-4 bg-blue-50";
+const pageContainerStyles =
+  " container p-4 mb-2 flex justify-center gap-4 bg-blue-50";
 const pageStyles =
   "bg-blue-100  hover:bg-blue-600 hover:text-blue-50 w-10 aspect-1/1 rounded-2xl flex justify-center items-center cursor-pointer";
 const Paginate = ({
@@ -15,6 +16,9 @@ const Paginate = ({
   setCurrentPage,
 }: PaginateProps) => {
   const pageArray = getPageNumber(totalPages, currentPage);
+  if (pageArray.length < 2) {
+    return;
+  }
   return (
     <div className={pageContainerStyles}>
       {pageArray.map((pageValue, index) => {

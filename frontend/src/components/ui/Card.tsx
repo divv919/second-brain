@@ -3,7 +3,7 @@ import { Tweet } from "react-tweet";
 import { OpenInTabIcon } from "../../icons/OpenInTabIcon";
 import { ShareIcon } from "../../icons/ShareIcon";
 import { TwitterIcon } from "../../icons/TwitterIcon";
-import TwitterPreview from "../TwitterPreview";
+// import TwitterPreview from "../TwitterPreview";
 import OtherPreview from "../OtherPreview";
 import { Tag } from "./Tag";
 import formatToDate from "../../utils/formatToDate";
@@ -39,7 +39,7 @@ export const Card = ({
   };
   console.log("console from card : ", createdAt);
   return (
-    <div className="w-95 h-100 size-fit rounded-md shadow-md bg-white p-6 flex flex-col gap-4 ">
+    <div className="w-full h-100 size-fit rounded-md shadow-md bg-white p-6 flex flex-col gap-4 ">
       <div className="flex justify-between  w-full">
         <div className="flex items-center gap-2  ">
           <div className="text-gray-600">
@@ -50,7 +50,7 @@ export const Card = ({
           </div>
           <Link to={link}>
             <div
-              className="text-lg  font-medium h-14 flex items-center cursor-pointer hover:text-primary "
+              className="text-md lg:text-lg  font-medium h-14 flex items-center cursor-pointer hover:text-primary "
               title={title}
             >
               {truncateWords(title, 7)}

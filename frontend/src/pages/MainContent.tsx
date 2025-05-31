@@ -94,13 +94,13 @@ const MainContent = () => {
           totalContents={allData.data?.data.length}
         />
       )}
-      <div className="bg-slate-100 flex flex-col gap-6 min-h-screen p-6">
+      <div className="w-full bg-slate-100 flex flex-col gap-6 min-h-full p-6">
         <div className="flex justify-between">
-          <div className="text-2xl text-blue-600 font-bold flex gap-2 items-center">
+          <div className="text-xl lg:text-2xl text-blue-600 font-bold flex gap-2 items-center">
             {titleToShow} Links
             {!loading ? (
               <div className="text-xl font-light">
-                ({data?.data.length} links)
+                ({data?.data.length || "0"} links)
               </div>
             ) : (
               <div>Loading</div>
@@ -124,24 +124,26 @@ const MainContent = () => {
           </div>
         </div>
 
-        <div className="flex justify-center grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-6">
+        <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
           {loading ? (
             <div>Loading</div>
           ) : (
             data?.data.map(
               ({ link, title, type, tags, createdAt, _id }: Content) => {
                 return (
-                  <Card
-                    createdAt={createdAt}
-                    link={link}
-                    title={title}
-                    tags={tags}
-                    type={type}
-                    onDelete={() => {
-                      console.log("passed success");
-                      handleDelete(_id);
-                    }}
-                  />
+                  <div className="flex justify-center">
+                    <Card
+                      createdAt={createdAt}
+                      link={link}
+                      title={title}
+                      tags={tags}
+                      type={type}
+                      onDelete={() => {
+                        console.log("passed success");
+                        handleDelete(_id);
+                      }}
+                    />
+                  </div>
                 );
               }
             )

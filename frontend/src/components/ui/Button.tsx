@@ -5,7 +5,7 @@ type Size = "sm" | "md" | "lg";
 interface ButtonProps {
   variant: Variant;
   size?: Size;
-  text: string;
+  text?: string;
   endIcon?: ReactElement;
   startIcon?: ReactElement;
   onClick?: () => void;
@@ -40,7 +40,7 @@ export const Button = ({
       {startIcon ? (
         <div className=" flex items-center  ">{startIcon}</div>
       ) : null}
-      <div className="flex self-center items-center ">{text}</div>
+      {text && <div className="flex self-center items-center ">{text}</div>}
       {endIcon ? <div className=" flex items-center ">{endIcon}</div> : null}
     </button>
   );

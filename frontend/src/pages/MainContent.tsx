@@ -94,9 +94,9 @@ const MainContent = () => {
           totalContents={allData.data?.data.length}
         />
       )}
-      <div className="w-full bg-slate-100 flex flex-col gap-6 min-h-full p-6">
+      <div className="w-full bg-slate-100 flex flex-col gap-6 min-h-screen p-6">
         <div className="flex justify-between">
-          <div className="text-xl lg:text-2xl text-blue-600 font-bold flex gap-2 items-center">
+          <div className="text-xl lg:text-2xl text-blue-600 font-bold flex gap-1 lg:gap-2 items-center">
             {titleToShow} Links
             {!loading ? (
               <div className="text-xl font-light">
@@ -106,7 +106,7 @@ const MainContent = () => {
               <div>Loading</div>
             )}
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="hidden md:block md:flex md:justify-end md:gap-4">
             <Button
               variant="secondary"
               size="md"
@@ -118,6 +118,20 @@ const MainContent = () => {
               variant="primary"
               size="md"
               text="Add Content"
+              startIcon={<PlusIcon size="md" />}
+              onClick={() => setCurrentOpenModal("add_link")}
+            />
+          </div>
+          <div className="md:hidden flex justify-end gap-4">
+            <Button
+              variant="secondary"
+              size="md"
+              startIcon={<ShareIcon size="md" />}
+              onClick={() => setCurrentOpenModal("share")}
+            />
+            <Button
+              variant="primary"
+              size="md"
               startIcon={<PlusIcon size="md" />}
               onClick={() => setCurrentOpenModal("add_link")}
             />

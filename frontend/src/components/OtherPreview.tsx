@@ -35,7 +35,7 @@ const OtherPreview = ({ link }: { link: string }) => {
   }, [link]);
   if (error) {
     return (
-      <div className="h-full">
+      <div className="h-full w-full">
         <Fallback text="No Preview" />
       </div>
     );

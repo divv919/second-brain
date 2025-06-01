@@ -39,7 +39,7 @@ export const Card = ({
   };
   console.log("console from card : ", createdAt);
   return (
-    <div className="w-full h-100 size-fit rounded-md shadow-md bg-white p-6 flex flex-col gap-4 ">
+    <div className="w-full aspect-5/4  rounded-md shadow-md bg-white p-6 flex flex-col gap-4 ">
       <div className="flex justify-between  w-full">
         <div className="flex items-center gap-2  ">
           <div className="text-gray-600">
@@ -86,7 +86,7 @@ export const Card = ({
         {type === "twitter" ? (
           // <TwitterPreview link={link} />
           <div className="w-full h-full relative">
-            <div className=" w-full h-full bg-gradient-to-t from-white from-0% to-99% to-transparent absolute z-100">
+            <div className=" w-full h-full bg-gradient-to-t from-white from-0% to-99% to-transparent absolute z-10">
               <div className="absolute bottom-5 left-1/2 cursor-pointer text-gray-600">
                 <OpenInTabIcon size="md" />
               </div>

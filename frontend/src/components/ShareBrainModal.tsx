@@ -149,7 +149,7 @@ export const ShareBrainModal = ({
     <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-100 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
 
-      <div className="fixed w-1/3 min-h-1/2 bg-white p-6 flex flex-col gap-8 rounded-md">
+      <div className="fixed w-1/2 min-w-84 max-w-96 aspect-1 bg-white p-6 flex flex-col gap-8 rounded-md">
         <div className="flex justify-between border-b border-gray-300 pb-2">
           <div className="text-xl font-semibold text-blue-600">
             Share Your Second Brain

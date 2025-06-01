@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-export const SideBarItem = ({
+export const SideBarItemMobile = ({
   icon,
   title,
   isActive = false,
@@ -11,11 +11,11 @@ export const SideBarItem = ({
   isActive?: boolean;
   onClick?: () => void;
 }) => {
-  const activeStyles = isActive ? "bg-blue-100 text-blue-600" : "text-gray-600";
+  const activeStyles = isActive ? "hidden" : "visible";
   return (
     <div
       onClick={onClick}
-      className={`flex items-center text-md gap-3 hover:bg-blue-100 rounded-md p-2 hover:text-blue-600 cursor-pointer ${activeStyles}`}
+      className={`flex justify-start  items-center text-md gap-3 text-blue-900 rounded-md p-2 ${activeStyles}`}
     >
       <div className="flex ">{icon}</div>
       <div className="text-lg font-regular ">{title}</div>

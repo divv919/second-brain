@@ -1,7 +1,7 @@
 import type { IconProps } from ".";
 import { sizeVariants } from ".";
 
-const Logout = ({ size = "sm" }: IconProps) => {
+const LogoutIcon = ({ size = "sm" }: IconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -24,4 +24,4 @@ const Logout = ({ size = "sm" }: IconProps) => {
   );
 };
 
-export default Logout;
+export default LogoutIcon;

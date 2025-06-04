@@ -10,7 +10,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     if (token) {
       fetchUserDetails();
@@ -30,7 +29,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const json = await response.json();
       setUser(json);
     } catch (err) {
-      setIsLoggedIn(false);
       throw new Error("Error fetching user details : " + err);
     } finally {
       setLoading(false);
@@ -50,18 +48,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const json = await response.json();
       localStorage.setItem("token", json.jwt);
       setToken(json.jwt);
-      setIsLoggedIn(true);
-      return { message: "Logged in successfully" };
+      return { status: 200, message: "Logged in successfully" };
     } catch (err) {
       setUser(null);
       console.error("Error logging in : " + err);
-      return { message: "Logged failed" };
+      return { status: 500, message: "Logged failed" };
     }
   };
   const logout = () => {
     setUser(null);
     setToken(null);
-    setIsLoggedIn(false);
     localStorage.removeItem("token");
     return { message: "Logged out successfully" };
   };
@@ -79,10 +75,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error();
       }
       const json = await response.json();
-      return json;
+      return { status: 200, json };
     } catch (err) {
       console.error("Error signing up", err);
-      return { message: "Error signing up" };
+      return { status: 500, message: "Error signing up" };
     }
   };
   const userRole = () => {

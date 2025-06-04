@@ -4,33 +4,96 @@ import { BrainIcon } from "../icons/BrainIcon";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Navigate, useNavigate } from "react-router-dom";
+import { ShowEyeIcon } from "../icons/ShowEye";
+import { HiddenEyeIcon } from "../icons/HiddenEye";
+import { z } from "zod";
+
+const InputSchema = z.object({
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters long")
+    .max(20, "Username must not exceed 20 characters")
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    ),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters long")
+    .max(100, "Password must not exceed 100 characters")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one special character"
+    ),
+});
+
 export const AuthPage = () => {
   const [newUser, setNewUser] = useState(false);
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const { login, signup, user } = useAuth();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState<{
+    password: string[] | undefined;
+    username: string[] | undefined;
+  }>({
+    password: undefined,
+    username: undefined,
+  });
+  const [passwordShow, setPasswordShow] = useState(false);
+
+  useEffect(() => {
+    if (passwordRef.current && usernameRef.current) {
+      passwordRef.current.value = "";
+      usernameRef.current.value = "";
+    }
+  }, [newUser]);
 
   const handleSubmit = async () => {
-    if (!usernameRef.current || !passwordRef.current) {
-      return { message: "Type valid input" };
-    }
-    if (newUser) {
-      //signup
-      const message = await signup(
-        usernameRef.current.value,
-        passwordRef.current.value
-      );
-      setNewUser(false);
-      console.log(message);
-    } else {
-      //login
-      const message = await login(
-        usernameRef.current.value,
-        passwordRef.current.value
-      );
-      navigate("/home/dashboard");
-      console.log(message);
+    try {
+      const formData = {
+        username: usernameRef.current?.value,
+        password: passwordRef.current?.value,
+      };
+      const result = InputSchema.safeParse(formData);
+      if (!result.success) {
+        const { username, password } = result.error.flatten().fieldErrors;
+
+        setErrors({ username, password });
+        return;
+      }
+      setErrors({ username: undefined, password: undefined });
+      if (newUser) {
+        //signup
+        const response = await signup(
+          usernameRef.current.value,
+          passwordRef.current.value
+        );
+        if (response.status !== 200) {
+          throw new Error("Error signing up");
+        }
+        setNewUser(false);
+        setIsSignedUp(true);
+
+        //put 200 status on toast
+      } else {
+        //login
+        const response = await login(
+          usernameRef.current.value,
+          passwordRef.current.value
+        );
+        if (response.status !== 200) {
+          throw new Error("Error signing up");
+        }
+        navigate("/home/dashboard");
+        //put 200 status on toast
+      }
+    } catch (err) {
+      //put it on toast
     }
   };
 
@@ -65,12 +128,19 @@ export const AuthPage = () => {
                   ref={usernameRef}
                   label="Username"
                   placeholder="Enter username"
+                  errors={errors.username}
                 />
                 <Input
                   ref={passwordRef}
                   label="Password"
-                  type="password"
+                  type={passwordShow ? "text" : "password"}
                   placeholder="Enter password"
+                  sideButton={
+                    <button onClick={() => setPasswordShow((curr) => !curr)}>
+                      {passwordShow ? <ShowEyeIcon /> : <HiddenEyeIcon />}
+                    </button>
+                  }
+                  errors={errors.password}
                 />
               </div>
               <Button
@@ -78,19 +148,21 @@ export const AuthPage = () => {
                 text={newUser ? "Sign up" : "Login"}
                 onClick={handleSubmit}
               />
-              <div className="text-md  text-center">
-                <div>
-                  {newUser
-                    ? "Already have an account?"
-                    : "Don't have an account?"}
+              {!isSignedUp && (
+                <div className="text-md  text-center">
+                  <div>
+                    {newUser
+                      ? "Already have an account?"
+                      : "Don't have an account?"}
+                  </div>
+                  <div
+                    className="text-blue-600 cursor-pointer"
+                    onClick={() => setNewUser((prev) => !prev)}
+                  >
+                    {newUser ? "Login" : "Sign up"}
+                  </div>
                 </div>
-                <div
-                  className="text-blue-600 cursor-pointer"
-                  onClick={() => setNewUser((prev) => !prev)}
-                >
-                  {newUser ? "Login" : "Sign up"}
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

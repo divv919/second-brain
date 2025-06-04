@@ -4,6 +4,7 @@ import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { InputDropdown } from "./ui/InputDropdown";
 import { InputTags } from "./ui/InputTags";
+import { useAuth } from "../hooks/useAuth";
 export const AddButtonModal = ({
   onClose,
   refetch,
@@ -11,6 +12,7 @@ export const AddButtonModal = ({
   onClose: () => void;
   refetch: () => void;
 }) => {
+  const { token } = useAuth();
   const contentTitle = useRef<HTMLInputElement>(null);
   const contentLink = useRef<HTMLInputElement>(null);
   const contentType = useRef<HTMLSelectElement>(null);
@@ -22,8 +24,7 @@ export const AddButtonModal = ({
         headers: {
           "Content-Type": "application/json",
 
-          Authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+          ...(token ? { Authorization: token } : {}),
         },
 
         body: JSON.stringify({

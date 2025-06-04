@@ -6,7 +6,7 @@ import { Input } from "./ui/Input";
 import { useState } from "react";
 import { useEffect } from "react";
 // import InputCheckbox from "./ui/InputCheckbox";
-
+import { useAuth } from "../hooks/useAuth";
 export const ShareBrainModal = ({
   onClose,
   totalContents = 0,
@@ -18,6 +18,7 @@ export const ShareBrainModal = ({
   const [showUserState, setShowUserState] = useState(false);
   const [loading, setLoading] = useState(false);
   const [actualState, setActualState] = useState(false);
+  const { token } = useAuth();
   useEffect(() => {
     console.log("Loading : ", loading);
   }, [loading]);
@@ -32,8 +33,7 @@ export const ShareBrainModal = ({
             {
               credentials: "include",
               headers: {
-                Authorization:
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+                ...(token ? { Authorization: token } : {}),
               },
             }
           );
@@ -106,8 +106,7 @@ export const ShareBrainModal = ({
         headers: {
           "Content-Type": "application/json",
 
-          Authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+          ...(token ? { Authorization: token } : {}),
         },
       });
       if (!response.ok) {
@@ -127,9 +126,9 @@ export const ShareBrainModal = ({
         credentials: "include",
         method: "POST",
         headers: {
-          Authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
           "Content-Type": "application/json",
+
+          ...(token ? { Authorization: token } : {}),
         },
         body: JSON.stringify({ enableShare: true }),
       });

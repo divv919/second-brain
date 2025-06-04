@@ -386,6 +386,19 @@ app.get("/api/v1/preview", async (req, res) => {
   res.status(200).json({ title, description, img });
 });
 
+app.get("/api/v1/userInfo", authMiddleware, async (req, res) => {
+  try {
+    const response = await User.findById(req.userId).select({
+      _id: 0,
+      password: 0,
+    });
+    res.status(200).json({ role: "user", username: response?.username });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({ message: "Error getting info" });
+  }
+});
+
 app.listen(process.env.PORT, () => {
   console.log("Listening at port : ", process.env.PORT);
 });

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-
+import { useAuth } from "./useAuth";
 export const useFetch = <T = unknown,>(url: string) => {
+  const { token } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [data, setData] = useState<T | null>(null);
@@ -10,8 +11,7 @@ export const useFetch = <T = unknown,>(url: string) => {
 
       const response = await fetch(url, {
         headers: {
-          Authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+          ...(token ? { Authorization: token } : {}),
         },
       });
       if (!response.ok) {

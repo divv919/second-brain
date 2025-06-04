@@ -4,7 +4,6 @@ import { MenuIcon } from "../icons/MenuIcon";
 import MainContent from "./MainContent";
 import { BrainIcon } from "../icons/BrainIcon";
 import { useState } from "react";
-import { SideBarItem } from "../components/ui/SideBarItem";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { useNavigate } from "react-router-dom";
 import { YoutubeIcon } from "../icons/YoutubeIcon";

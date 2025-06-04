@@ -8,8 +8,8 @@ import { useLocation } from "react-router-dom";
 import { Tag } from "./Tag";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../hooks/useFetch";
-import Logout from "../../icons/LogoutIcon";
-
+import { useAuth } from "../../hooks/useAuth";
+import LogoutIcon from "../../icons/LogoutIcon";
 interface TagData {
   tagId: string;
   tagName: string;
@@ -18,6 +18,7 @@ interface TagData {
 export const SideBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const { data, error, loading, refetch } = useFetch<TagData[]>(
     "http://localhost:3000/api/v1/mostUsedTags"
   );
@@ -67,13 +68,19 @@ export const SideBar = () => {
         <div className="flex flex-col gap-6">
           <div className="text-sm text-gray-600">MOST USED TAGS</div>
           <div className="flex flex-wrap gap-2">
+            {!data?.length && <div>No tags</div>}
             {data?.map((tag) => (
               <Tag tagText={tag.tagName}></Tag>
             ))}
           </div>
         </div>
-        <div>
-          <SideBarItem icon={<Logout size="md" />} title="Logout" />
+        <div
+          onClick={() => {
+            logout();
+            window.location.reload();
+          }}
+        >
+          <SideBarItem icon={<LogoutIcon size="md" />} title="Logout" />
         </div>
       </div>
       <div></div>

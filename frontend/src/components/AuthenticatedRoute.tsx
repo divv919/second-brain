@@ -5,7 +5,11 @@ export const AuthenticatedRoute = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
   console.log(user);
   if (loading) {
-    return <div>Wait</div>;
+    return (
+      <div className="w-screen h-screen flex justify-center items-center">
+        Global Loader
+      </div>
+    );
   }
   if (user) {
     return children;

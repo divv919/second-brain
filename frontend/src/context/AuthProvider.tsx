@@ -43,7 +43,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({ username, password }),
       });
       if (!response.ok) {
-        throw new Error();
+        if (response.status === 404) {
+          return { status: 404, message: "User does not exist" };
+        } else if (response.status === 403) {
+          return { status: 403, message: "Invalid password" };
+        }
       }
       const json = await response.json();
       localStorage.setItem("token", json.jwt);
@@ -72,15 +76,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({ username, password }),
       });
       if (!response.ok) {
-        throw new Error();
+        if (response.status === 403) {
+          return { status: 403, message: "User already exists" };
+        }
       }
       const json = await response.json();
-      return { status: 200, json };
+      return { status: 200, message: json.message };
     } catch (err) {
-      console.error("Error signing up", err);
-      return { status: 500, message: "Error signing up" };
+      return { status: 500, message: err };
     }
   };
+
   const userRole = () => {
     if (!user) {
       return "Error getting user role";

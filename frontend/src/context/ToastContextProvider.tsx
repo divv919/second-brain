@@ -48,7 +48,7 @@ export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
           }}
           className={`${
             variantStyles[snackbar.variant]
-          } border border-slate-400 fixed flex bottom-5 left-5 rounded min-w-50 p-4 shadow transition-all duration-500 ease-in-out ${
+          } border border-slate-400 fixed flex bottom-5 left-5 rounded min-w-50 p-4 shadow transition-all duration-500 ease-in-out z-100 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
         >

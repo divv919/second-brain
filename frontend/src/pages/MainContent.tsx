@@ -9,6 +9,8 @@ import { ShareIcon } from "../icons/ShareIcon";
 import { useLocation } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import Paginate from "../components/Paginate";
+import { useAuth } from "../hooks/useAuth";
+import EmptyPlaceholder from "../components/ui/EmptyPlaceholder";
 
 interface Content {
   link: string;
@@ -26,6 +28,7 @@ const MainContent = () => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const { token } = useAuth();
   let urlFrag;
   let titleToShow;
 
@@ -63,8 +66,7 @@ const MainContent = () => {
         headers: {
           "Content-Type": "application/json",
 
-          Authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
+          ...(token ? { Authorization: token } : {}),
         },
         body: JSON.stringify({ linkId: id }),
       });
@@ -106,7 +108,7 @@ const MainContent = () => {
               <div>Loading</div>
             )}
           </div>
-          <div className="hidden md:block md:flex md:justify-end md:gap-4">
+          <div className="hidden md:flex md:justify-end md:gap-4">
             <Button
               variant="secondary"
               size="md"
@@ -138,32 +140,39 @@ const MainContent = () => {
           </div>
         </div>
 
-        <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+        <div className="w-full">
           {loading ? (
             <div>Loading</div>
-          ) : (
+          ) : data?.data.length ? (
             data?.data.map(
               ({ link, title, type, tags, createdAt, _id }: Content) => {
                 return (
-                  <div className="flex justify-center">
-                    <Card
-                      createdAt={createdAt}
-                      link={link}
-                      title={title}
-                      tags={tags}
-                      type={type}
-                      onDelete={() => {
-                        console.log("passed success");
-                        handleDelete(_id);
-                      }}
-                    />
+                  <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    <div className="flex justify-center">
+                      <Card
+                        createdAt={createdAt}
+                        link={link}
+                        title={title}
+                        tags={tags}
+                        type={type}
+                        onDelete={() => {
+                          handleDelete(_id);
+                        }}
+                      />
+                    </div>
                   </div>
                 );
               }
             )
+          ) : (
+            <div className="w-full  p-20 flex flex-col gap-5 justify-center items-center ">
+              <EmptyPlaceholder />
+              <div className="text-xl text-blue-600 ">No Items to show</div>
+            </div>
           )}
         </div>
       </div>
+
       <Paginate
         totalPages={data?.totalPages}
         currentPage={currentPage}

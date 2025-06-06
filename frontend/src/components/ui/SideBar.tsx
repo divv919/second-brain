@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../hooks/useFetch";
 import { useAuth } from "../../hooks/useAuth";
 import LogoutIcon from "../../icons/LogoutIcon";
+import { useToast } from "../../hooks/useToast";
 interface TagData {
   tagId: string;
   tagName: string;
@@ -22,6 +23,7 @@ export const SideBar = () => {
   const { data, error, loading, refetch } = useFetch<TagData[]>(
     "http://localhost:3000/api/v1/mostUsedTags"
   );
+  const { enableSnackbar } = useToast();
   return (
     <div className="w-1/5 h-screen fixed flex flex-col gap-6  shadow-md  ">
       <div className="flex gap-3 p-6 border-b-2 border-gray-200 cursor-pointer text-blue-600">
@@ -77,7 +79,8 @@ export const SideBar = () => {
         <div
           onClick={() => {
             logout();
-            window.location.reload();
+            enableSnackbar("Logged out successfully", "success");
+            navigate("/auth");
           }}
         >
           <SideBarItem icon={<LogoutIcon size="md" />} title="Logout" />

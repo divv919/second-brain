@@ -36,7 +36,7 @@ export const AuthPage = () => {
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const [isSignedUp, setIsSignedUp] = useState(false);
-  const { login, signup, user } = useAuth();
+  const { login, signup, user, loading } = useAuth();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{
     password: string[] | undefined;
@@ -69,108 +69,117 @@ export const AuthPage = () => {
       }
       setErrors({ username: undefined, password: undefined });
       if (newUser) {
-        //signup
         const response = await signup(
           usernameRef.current.value,
           passwordRef.current.value
         );
         if (response.status !== 200) {
-          throw new Error("Error signing up");
+          enableSnackbar(response.message, "error");
+          return;
         }
         setNewUser(false);
         setIsSignedUp(true);
-
-        //put 200 status on toast
+        enableSnackbar("Signup Successful", "success");
       } else {
         //login
         const response = await login(
           usernameRef.current.value,
           passwordRef.current.value
         );
+
         if (response.status !== 200) {
-          throw new Error("Error signing up");
+          enableSnackbar(response.message, "error");
+          return;
         }
         navigate("/home/dashboard");
-        //put 200 status on toast
+        enableSnackbar("Login Successful", "success");
       }
     } catch (err) {
       //put it on toast
+      console.log(err);
+      enableSnackbar("Internal Server error", "error");
     }
   };
 
+  if (loading) {
+    return (
+      <div className="w-screen h-screen flex justify-center items-center">
+        Global Loader
+      </div>
+    );
+  }
   return (
     <>
-      {user && <Navigate to="/home/dashboard" />}
+      {user ? (
+        <Navigate to="/home/dashboard" />
+      ) : (
+        <div className="p-4 flex flex-col min-h-screen justify-start items-center gap-8 lg:gap-16 font-poppins bg-gradient-to-r from-blue-500 to-blue-900">
+          <nav className="text-2xl text-blue-300 py-6 font-extrabold tracking-tight flex gap-2 items-center">
+            <BrainIcon /> Second Brain
+          </nav>
 
-      <div className="p-4 flex flex-col min-h-screen justify-start items-center gap-8 lg:gap-16 font-poppins bg-gradient-to-r from-blue-500 to-blue-900">
-        <nav className="text-2xl text-blue-300 py-6 font-extrabold tracking-tight flex gap-2 items-center">
-          <BrainIcon /> Second Brain
-        </nav>
-
-        <div className="flex flex-col  items-center lg:items-start  lg:flex-row gap-2 lg:gap-20 text-blue-950">
-          <div className="w-full tracking-tight font-bold flex-col flex text-3xl md:text-3xl lg:flex-col md:flex-row gap-1 md:gap-2 lg:gap-12 justify-between lg:pb-28 items-center lg:items-start text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-300">
-            <div className="lg:text-6xl xl:text-8xl">Personalized </div>
-            <div className="lg:text-5xl xl:text-7xl">Space for</div>
-            <div className="lg:text-4xl xl:text-6xl">all your</div>
-            <div className="lg:text-3xl xl:text-5xl">Links</div>
-          </div>
-          <div className="flex m-12 lg:m-0 w-full flex-col gap-10 p-6 md:p-8 md:h-120 md:w-90 bg-blue-50 rounded-2xl">
-            <div className=" text-center flex flex-col gap-1">
-              <div className="font-semibold text-3xl">
-                {newUser ? "Sign up" : "Login"}
-              </div>
-              <div className="text-md font-light">
-                Welcome to <span className="text-blue-600">Second Brain</span>
-              </div>
+          <div className="flex flex-col  items-center lg:items-start  lg:flex-row gap-2 lg:gap-20 text-blue-950">
+            <div className="w-full tracking-tight font-bold flex-col flex text-3xl md:text-3xl lg:flex-col md:flex-row gap-1 md:gap-2 lg:gap-12 justify-between lg:pb-28 items-center lg:items-start text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-300">
+              <div className="lg:text-6xl xl:text-8xl">Personalized </div>
+              <div className="lg:text-5xl xl:text-7xl">Space for</div>
+              <div className="lg:text-4xl xl:text-6xl">all your</div>
+              <div className="lg:text-3xl xl:text-5xl">Links</div>
             </div>
-            <div className="flex flex-col gap-8 w-full">
-              <div className="flex flex-col gap-4 ">
-                <Input
-                  ref={usernameRef}
-                  label="Username"
-                  placeholder="Enter username"
-                  errors={errors.username}
-                />
-                <Input
-                  ref={passwordRef}
-                  label="Password"
-                  type={passwordShow ? "text" : "password"}
-                  placeholder="Enter password"
-                  sideButton={
-                    <button onClick={() => setPasswordShow((curr) => !curr)}>
-                      {passwordShow ? <ShowEyeIcon /> : <HiddenEyeIcon />}
-                    </button>
-                  }
-                  errors={errors.password}
-                />
-                <button onClick={() => enableSnackbar("hi", "neutral")}>
-                  Click for snackbar
-                </button>
-              </div>
-              <Button
-                variant="primary"
-                text={newUser ? "Sign up" : "Login"}
-                onClick={handleSubmit}
-              />
-              {!isSignedUp && (
-                <div className="text-md  text-center">
-                  <div>
-                    {newUser
-                      ? "Already have an account?"
-                      : "Don't have an account?"}
-                  </div>
-                  <div
-                    className="text-blue-600 cursor-pointer"
-                    onClick={() => setNewUser((prev) => !prev)}
-                  >
-                    {newUser ? "Login" : "Sign up"}
-                  </div>
+            <div className="flex m-12 lg:m-0  flex-col gap-10 p-6 md:p-8 md:h-120 md:w-100 bg-blue-50 rounded-2xl">
+              <div className=" text-center flex flex-col gap-1">
+                <div className="font-semibold text-3xl">
+                  {newUser ? "Sign up" : "Login"}
                 </div>
-              )}
+                <div className="text-md font-light">
+                  Welcome to <span className="text-blue-600">Second Brain</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-8 w-full">
+                <div className="flex flex-col gap-4 ">
+                  <Input
+                    ref={usernameRef}
+                    label="Username"
+                    placeholder="Enter username"
+                    errors={errors.username}
+                  />
+                  <Input
+                    ref={passwordRef}
+                    label="Password"
+                    type={passwordShow ? "text" : "password"}
+                    placeholder="Enter password"
+                    sideButton={
+                      <button onClick={() => setPasswordShow((curr) => !curr)}>
+                        {passwordShow ? <ShowEyeIcon /> : <HiddenEyeIcon />}
+                      </button>
+                    }
+                    errors={errors.password}
+                  />
+                </div>
+                <Button
+                  variant="primary"
+                  text={newUser ? "Sign up" : "Login"}
+                  onClick={handleSubmit}
+                />
+                {!isSignedUp && (
+                  <div className="text-md  text-center">
+                    <div>
+                      {newUser
+                        ? "Already have an account?"
+                        : "Don't have an account?"}
+                    </div>
+                    <div
+                      className="text-blue-600 cursor-pointer"
+                      onClick={() => setNewUser((prev) => !prev)}
+                    >
+                      {newUser ? "Login" : "Sign up"}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

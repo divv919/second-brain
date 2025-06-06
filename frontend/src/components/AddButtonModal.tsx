@@ -5,6 +5,7 @@ import { Input } from "./ui/Input";
 import { InputDropdown } from "./ui/InputDropdown";
 import { InputTags } from "./ui/InputTags";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/useToast";
 export const AddButtonModal = ({
   onClose,
   refetch,
@@ -16,6 +17,7 @@ export const AddButtonModal = ({
   const contentTitle = useRef<HTMLInputElement>(null);
   const contentLink = useRef<HTMLInputElement>(null);
   const contentType = useRef<HTMLSelectElement>(null);
+  const { enableSnackbar } = useToast();
   async function handleSubmit() {
     try {
       const response = await fetch("http://localhost:3000/api/v1/content", {
@@ -37,10 +39,9 @@ export const AddButtonModal = ({
       if (!response.ok) {
         throw new Error();
       }
-      const result = await response.json();
       refetch();
       onClose();
-      console.log(result);
+      enableSnackbar("Added content successfully", "success");
     } catch (err) {
       console.log(err);
     }
@@ -48,7 +49,7 @@ export const AddButtonModal = ({
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState(" ");
   return (
-    <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-1000 items-center">
+    <div className="flex  h-full w-full top-0 left-0  justify-center fixed z-100 items-center">
       <div className="bg-black opacity-80 w-screen h-screen  "></div>
       <div className="fixed w-1/2 min-w-84 max-w-96 aspect-3/4 bg-white p-6 flex flex-col gap-4 rounded-md">
         <div className="flex justify-between border-b border-gray-300 pb-2">
@@ -82,7 +83,7 @@ export const AddButtonModal = ({
             setTags={setTags}
             onChange={setInputValue}
             value={inputValue}
-            maxLength="30"
+            maxLength="10"
           />
           <InputDropdown
             ref={contentType}

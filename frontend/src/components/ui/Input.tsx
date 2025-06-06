@@ -36,7 +36,7 @@ export const Input = ({
       <div className="relative">
         <input
           ref={ref}
-          className=" border-1 border-gray-300 outline-primary p-2 rounded-md"
+          className="w-full border-1 border-gray-300 outline-primary p-2 rounded-md"
           placeholder={placeholder}
           type={type}
           onChange={onChange}

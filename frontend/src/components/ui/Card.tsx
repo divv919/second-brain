@@ -11,6 +11,7 @@ import truncateWords from "../../utils/truncateWords";
 import { YoutubeIcon } from "../../icons/YoutubeIcon";
 import { LinkIcon } from "../../icons/LinkIcon";
 import { Link } from "react-router-dom";
+import { useToast } from "../../hooks/useToast";
 interface CardProps {
   title: string;
   type: string;
@@ -30,11 +31,13 @@ export const Card = ({
   onDelete,
 }: CardProps) => {
   console.log(type);
+  const { enableSnackbar } = useToast();
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(link);
+      enableSnackbar("Link Copied", "success");
     } catch (err) {
-      console.log("error copying", err);
+      enableSnackbar("Failed to copy", "error");
     }
   };
   console.log("console from card : ", createdAt);
@@ -75,7 +78,7 @@ export const Card = ({
             className="hover:text-primary cursor-pointer"
             onClick={() => {
               onDelete?.();
-              console.log(typeof onDelete);
+              enableSnackbar("Deleted Successfully", "success");
             }}
           >
             <DeleteIcon size="md" />

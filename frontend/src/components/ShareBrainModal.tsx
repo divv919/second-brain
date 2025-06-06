@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 // import InputCheckbox from "./ui/InputCheckbox";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/useToast";
 export const ShareBrainModal = ({
   onClose,
   totalContents = 0,
@@ -19,6 +20,7 @@ export const ShareBrainModal = ({
   const [loading, setLoading] = useState(false);
   const [actualState, setActualState] = useState(false);
   const { token } = useAuth();
+  const { enableSnackbar } = useToast();
   useEffect(() => {
     console.log("Loading : ", loading);
   }, [loading]);
@@ -139,7 +141,7 @@ export const ShareBrainModal = ({
       await navigator.clipboard.writeText(
         "http://localhost:5173/sharedBrain/" + encodeURIComponent(json.link)
       );
-      alert("link copied");
+      enableSnackbar("Copied successfully", "success");
     } catch (err) {
       console.log(err);
     }

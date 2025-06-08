@@ -8,6 +8,7 @@ import SharedBrainPage from "./pages/SharedBrainPage";
 import AuthProvider from "./context/AuthProvider";
 import { AuthenticatedRoute } from "./components/AuthenticatedRoute";
 import { ToastContextProvider } from "./context/ToastContextProvider";
+import { NotFoundPage } from "./pages/NotFoundPage";
 export default function App() {
   return (
     <ToastContextProvider>
@@ -32,6 +33,7 @@ export default function App() {
             >
               <Route index element={<Navigate to="dashboard" />} />
             </Route>
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

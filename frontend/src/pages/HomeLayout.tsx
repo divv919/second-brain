@@ -15,7 +15,7 @@ export default function HomeLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   return (
-    <div className="flex font-poppins">
+    <div className="flex ">
       <div className="hidden lg:block w-1/4 h-screen">
         <SideBar />
       </div>

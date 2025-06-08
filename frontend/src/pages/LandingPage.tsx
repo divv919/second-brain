@@ -3,7 +3,7 @@ import { BrainIcon } from "../icons/BrainIcon";
 import { Link } from "react-router-dom";
 const LandingPage = () => {
   return (
-    <div className="flex flex-col gap-12 md:gap-12  font-poppins">
+    <div className="flex flex-col gap-12 md:gap-12  ">
       <nav className="w-full p-4 md:px-21 md:py-6 bg-blue-100 flex justify-between items-center ">
         <h2 className="font-bold p-0 m-0 text-md md:text-2xl text-blue-600 flex items-center gap-1 md:gap-2 cursor-pointer tracking-tighter">
           <BrainIcon />

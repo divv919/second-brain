@@ -18,7 +18,7 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   console.log("Incoming Content-Type:", req.headers["content-type"]);
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const limit = 9;
+const limit = 12;
 
 app.post("/api/v1/signup", async (req, res) => {
   const { username, password } = req.body;
@@ -127,15 +127,53 @@ app.get("/api/v1/content", authMiddleware, async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .populate("tags");
-    res
-      .status(200)
-      .json({ totalPages: Math.ceil(totalDocuments / limit), data: result });
+    console.log("total docs : ", totalDocuments);
+    res.status(200).json({
+      totalDocuments,
+      oneMinusTotalDocs: totalDocuments - 1,
+      totalPages: Math.ceil(totalDocuments / limit),
+      data: result,
+    });
   } catch (err) {
     res.status(500).json({ message: err });
   }
 });
+
 app.post("/api/v1/content", authMiddleware, async (req, res) => {
-  console.log(req.body);
+  if (Array.isArray(req.body)) {
+    try {
+      const response = Promise.all(
+        req.body.map(async (content) => {
+          const tagIds = await Promise.all(
+            content.tags.map(async (tag: string) => {
+              const tagExists = await Tag.findOne({ name: tag });
+              // console.log(typeof tagExists);
+              if (tagExists) {
+                return tagExists._id;
+              }
+              const createdTag = await Tag.create({ name: tag });
+              return createdTag._id;
+            })
+          );
+
+          const result = await Content.create({
+            userId: req.userId,
+            type: content.type,
+            link: content.link,
+            title: content.title,
+            tags: content.tagIds,
+          });
+        })
+      );
+      res
+        .status(200)
+        .json({ message: "Content added successfully", content: response });
+      return;
+    } catch (err) {
+      // console.log("Error posting contnet", err);
+      res.status(500).json({ message: err });
+    }
+  }
 
   const { type, link, title, tags } = req.body;
   // res.set("Access-Control-Allow-Origin", "*");
@@ -168,6 +206,7 @@ app.post("/api/v1/content", authMiddleware, async (req, res) => {
     res.status(500).json({ message: err });
   }
 });
+
 app.delete("/api/v1/content", authMiddleware, async (req, res) => {
   const { linkId } = req.body;
   console.log("linkId  : ", linkId, " type : ", typeof linkId);
@@ -279,9 +318,9 @@ app.get("/api/v1/tags", authMiddleware, async (req, res) => {
 app.put("/api/v1/content/:contentId", authMiddleware, async (req, res) => {
   const { tags, ...toUpdate } = req.body;
   const { contentId } = req.params;
-  console.log("Request body:", JSON.stringify(req.body));
-  console.log("User ID from token:", req.userId);
-  console.log("Content ID from params:", req.params.contentId);
+  // console.log("Request body:", JSON.stringify(req.body));
+  // console.log("User ID from token:", req.userId);
+  // console.log("Content ID from params:", req.params.contentId);
   try {
     const tagIds = await Promise.all(
       tags.map(async (tag: string) => {
@@ -363,7 +402,7 @@ app.get("/api/v1/preview", async (req, res) => {
       headers: { "User-Agent": "Mozilla/5.0" },
     });
   } catch (err) {
-    console.log("error making get request to url", err);
+    // console.log("error making get request to url", err);
     res.status(500).json({ message: "error making get request to url" });
     return;
   }

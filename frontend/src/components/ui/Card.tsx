@@ -62,10 +62,8 @@ export const Card = ({
         </div>
         <div className="flex items-center gap-2 text-gray-600 ">
           <div className="hover:text-primary cursor-pointer">
-            <a href={link}>
-              <Link to={link} target="_blank">
-                <OpenInTabIcon size="md" />
-              </Link>
+            <a target="_blank" href={link}>
+              <OpenInTabIcon size="md" />
             </a>
           </div>
           <div
@@ -74,15 +72,16 @@ export const Card = ({
           >
             <ShareIcon size="md" />
           </div>
-          <div
-            className="hover:text-primary cursor-pointer"
-            onClick={() => {
-              onDelete?.();
-              enableSnackbar("Deleted Successfully", "success");
-            }}
-          >
-            <DeleteIcon size="md" />
-          </div>
+          {onDelete && (
+            <div
+              className="hover:text-primary cursor-pointer"
+              onClick={() => {
+                onDelete?.();
+              }}
+            >
+              <DeleteIcon size="md" />
+            </div>
+          )}
         </div>
       </div>
       <div className="aspect-16/9 w-full rounded-md overflow-hidden">

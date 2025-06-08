@@ -3,11 +3,17 @@ import { Input } from "../components/ui/Input";
 import { BrainIcon } from "../icons/BrainIcon";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { Navigate, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  redirect,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { ShowEyeIcon } from "../icons/ShowEye";
 import { HiddenEyeIcon } from "../icons/HiddenEye";
 import { z } from "zod";
 import { useToast } from "../hooks/useToast";
+import GlobalLoader from "../components/ui/GlobalLoader";
 const InputSchema = z.object({
   username: z
     .string()
@@ -35,9 +41,11 @@ export const AuthPage = () => {
   const [newUser, setNewUser] = useState(false);
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+
   const [isSignedUp, setIsSignedUp] = useState(false);
   const { login, signup, user, loading } = useAuth();
   const navigate = useNavigate();
+
   const [errors, setErrors] = useState<{
     password: string[] | undefined;
     username: string[] | undefined;
@@ -91,7 +99,11 @@ export const AuthPage = () => {
           enableSnackbar(response.message, "error");
           return;
         }
-        navigate("/home/dashboard");
+
+        navigate(
+          window.location.search.match(/[?&]redirectTo=([^&]+)/)?.[1] ||
+            "/home/dashboard"
+        );
         enableSnackbar("Login Successful", "success");
       }
     } catch (err) {
@@ -104,7 +116,7 @@ export const AuthPage = () => {
   if (loading) {
     return (
       <div className="w-screen h-screen flex justify-center items-center">
-        Global Loader
+        <GlobalLoader />
       </div>
     );
   }
@@ -113,7 +125,7 @@ export const AuthPage = () => {
       {user ? (
         <Navigate to="/home/dashboard" />
       ) : (
-        <div className="p-4 flex flex-col min-h-screen justify-start items-center gap-8 lg:gap-16 font-poppins bg-gradient-to-r from-blue-500 to-blue-900">
+        <div className="p-4 flex flex-col min-h-screen justify-start items-center gap-8 lg:gap-16  bg-gradient-to-r from-blue-500 to-blue-900">
           <nav className="text-2xl text-blue-300 py-6 font-extrabold tracking-tight flex gap-2 items-center">
             <BrainIcon /> Second Brain
           </nav>

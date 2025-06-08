@@ -11,6 +11,8 @@ import { useFetch } from "../../hooks/useFetch";
 import { useAuth } from "../../hooks/useAuth";
 import LogoutIcon from "../../icons/LogoutIcon";
 import { useToast } from "../../hooks/useToast";
+import Skeleton from "react-loading-skeleton";
+import GlobalLoader from "./GlobalLoader";
 interface TagData {
   tagId: string;
   tagName: string;
@@ -24,6 +26,7 @@ export const SideBar = () => {
     "http://localhost:3000/api/v1/mostUsedTags"
   );
   const { enableSnackbar } = useToast();
+
   return (
     <div className="w-1/5 h-screen fixed flex flex-col gap-6  shadow-md  ">
       <div className="flex gap-3 p-6 border-b-2 border-gray-200 cursor-pointer text-blue-600">
@@ -70,7 +73,15 @@ export const SideBar = () => {
         <div className="flex flex-col gap-6">
           <div className="text-sm text-gray-600">MOST USED TAGS</div>
           <div className="flex flex-wrap gap-2">
-            {!data?.length && <div>No tags</div>}
+            {loading ? (
+              <div className="w-fill">
+                <Skeleton />
+              </div>
+            ) : (
+              (!data?.length || error) && (
+                <div className=" text-gray-600">No tags</div>
+              )
+            )}
             {data?.map((tag) => (
               <Tag tagText={tag.tagName}></Tag>
             ))}
@@ -86,7 +97,6 @@ export const SideBar = () => {
           <SideBarItem icon={<LogoutIcon size="md" />} title="Logout" />
         </div>
       </div>
-      <div></div>
     </div>
   );
 };

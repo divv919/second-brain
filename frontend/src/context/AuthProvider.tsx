@@ -1,9 +1,11 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
 
-const FETCH_USER_DETAILS_API = "http://localhost:3000/api/v1/userInfo";
-const LOGIN_API = "http://localhost:3000/api/v1/signin";
-const SIGNUP_API = "http://localhost:3000/api/v1/signup";
+const FETCH_USER_DETAILS_API = `${
+  import.meta.env.VITE_BACKEND_ROOT_URL
+}/api/v1/userInfo`;
+const LOGIN_API = `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/signin`;
+const SIGNUP_API = `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/signup`;
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<{ username: string; role: string } | null>(
     null

@@ -1,6 +1,7 @@
 import { Button } from "../components/ui/Button";
 import { BrainIcon } from "../icons/BrainIcon";
 import { Link } from "react-router-dom";
+// import "dotenv/config";
 const LandingPage = () => {
   return (
     <div className="flex flex-col gap-12 md:gap-12  ">

@@ -1,8 +1,5 @@
-import type { IconProps } from ".";
-import { sizeVariants } from ".";
-
 const defaultStyles = "size-2 md:size-3 lg:size-4 xl:size-5";
-export const CopyIcon = ({ size = "sm" }: IconProps) => {
+export const CopyIcon = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

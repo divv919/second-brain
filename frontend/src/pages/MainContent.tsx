@@ -59,24 +59,29 @@ const MainContent = () => {
   }
   const [currentOpenModal, setCurrentOpenModal] = useState<string>("");
   const { data, loading, refetch } = useFetch<Data>(
-    `http://localhost:3000/api/v1/content?type=${urlFrag}&page=${currentPage}`
+    `${
+      import.meta.env.VITE_BACKEND_ROOT_URL
+    }/api/v1/content?type=${urlFrag}&page=${currentPage}`
   );
   const allData = useFetch<Data>(
-    "http://localhost:3000/api/v1/content?type=all"
+    `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/content?type=all`
   );
-  console.log("data   : ", data);
+
   async function handleDelete(id: string) {
     try {
       console.log("Delete handler running");
-      const response = await fetch("http://localhost:3000/api/v1/content", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/content`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
 
-          ...(token ? { Authorization: token } : {}),
-        },
-        body: JSON.stringify({ linkId: id }),
-      });
+            ...(token ? { Authorization: token } : {}),
+          },
+          body: JSON.stringify({ linkId: id }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Error deleting content");
       }
@@ -124,7 +129,7 @@ const MainContent = () => {
               variant="secondary"
               size="md"
               text="Share Brain"
-              startIcon={<ShareIcon size="md" />}
+              startIcon={<ShareIcon />}
               onClick={() => setCurrentOpenModal("share")}
             />
             <Button
@@ -139,7 +144,7 @@ const MainContent = () => {
             <Button
               variant="secondary"
               size="md"
-              startIcon={<ShareIcon size="md" />}
+              startIcon={<ShareIcon />}
               onClick={() => setCurrentOpenModal("share")}
             />
             <Button

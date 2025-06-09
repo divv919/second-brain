@@ -1,4 +1,3 @@
-import { useFetch } from "../hooks/useFetch";
 import { CloseIcon } from "../icons/CloseIcon";
 import { CopyIcon } from "../icons/CopyIcon";
 import { Button } from "./ui/Button";
@@ -31,7 +30,7 @@ export const ShareBrainModal = ({
           setLoading(true);
 
           const response = await fetch(
-            "http://localhost:3000/api/v1/brain/share",
+            `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/brain/share`,
             {
               credentials: "include",
               headers: {
@@ -55,7 +54,10 @@ export const ShareBrainModal = ({
         }
       }
       checkEnableShare();
-    } catch (err) {}
+    } catch (err) {
+      enableSnackbar("Error occured", "error");
+      console.log(err);
+    }
   }, []);
 
   useEffect(() => {
@@ -63,54 +65,25 @@ export const ShareBrainModal = ({
       setShowUserState(actualState);
     }
   }, [actualState]);
-  // useEffect(() => {
-  //   async function changeEnableShare() {
-  //     console.log("Use effect is run");
-  //     try {
-  //       const response = await fetch(
-  //         "http://localhost:3000/api/v1/brain/share",
-  //         {
-  //           credentials: "include",
-  //           method: "POST",
-  //           body: JSON.stringify({
-  //             toShare: enabledForShare,
-  //           }),
-  //           headers: {
-  //             "Content-Type": "application/json",
 
-  //             Authorization:
-  //               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
-  //           },
-  //         }
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Error changing enable share");
-  //       }
-  //       const json = await response.json();
-  //       // setEnabledForShare(json?.enableShare);
-  //     } catch (err) {
-  //       console.log(err);
-  //       setEnabledForShare(!enabledForShare);
-  //     }
-  //   }
-  //   changeEnableShare();
-  // }, [enabledForShare]);
-
-  async function handleEnableShare(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleEnableShare() {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/v1/brain/share", {
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify({
-          toShare: !actualState,
-        }),
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/brain/share`,
+        {
+          credentials: "include",
+          method: "POST",
+          body: JSON.stringify({
+            toShare: !actualState,
+          }),
+          headers: {
+            "Content-Type": "application/json",
 
-          ...(token ? { Authorization: token } : {}),
-        },
-      });
+            ...(token ? { Authorization: token } : {}),
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Error changing enable share");
       }
@@ -120,26 +93,35 @@ export const ShareBrainModal = ({
       console.log(err);
     } finally {
       setLoading(false);
+      enableSnackbar(
+        actualState
+          ? "Disabled Share successfully"
+          : "Enabled Share successfully",
+        "success"
+      );
     }
   }
   async function handleCopy() {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/brain/share", {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/brain/share`,
+        {
+          credentials: "include",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
 
-          ...(token ? { Authorization: token } : {}),
-        },
-        body: JSON.stringify({ enableShare: true }),
-      });
+            ...(token ? { Authorization: token } : {}),
+          },
+          body: JSON.stringify({ enableShare: true }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Error enabling link share");
       }
       const json = await response.json();
       await navigator.clipboard.writeText(
-        "http://localhost:5173/sharedBrain/" + encodeURIComponent(json.link)
+        window.location.origin + "/sharedBrain/" + encodeURIComponent(json.link)
       );
       enableSnackbar("Copied successfully", "success");
     } catch (err) {
@@ -170,7 +152,7 @@ export const ShareBrainModal = ({
             label="Enable sharing"
             inSameLine={true}
             type="checkbox"
-            onChange={(e) => e && handleEnableShare(e)}
+            onChange={handleEnableShare}
             checked={showUserState}
             loading={loading}
           />
@@ -178,7 +160,7 @@ export const ShareBrainModal = ({
             <Button
               text="Copy Link"
               variant="primary"
-              endIcon={<CopyIcon size="md" />}
+              endIcon={<CopyIcon />}
               size="md"
               onClick={handleCopy}
             />

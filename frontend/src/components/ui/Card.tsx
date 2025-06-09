@@ -38,6 +38,7 @@ export const Card = ({
       enableSnackbar("Link Copied", "success");
     } catch (err) {
       enableSnackbar("Failed to copy", "error");
+      console.log(err);
     }
   };
   console.log("console from card : ", createdAt);
@@ -70,7 +71,7 @@ export const Card = ({
             className="hover:text-primary cursor-pointer"
             onClick={handleCopyLink}
           >
-            <ShareIcon size="md" />
+            <ShareIcon />
           </div>
           {onDelete && (
             <div

@@ -12,7 +12,7 @@ import { useAuth } from "../../hooks/useAuth";
 import LogoutIcon from "../../icons/LogoutIcon";
 import { useToast } from "../../hooks/useToast";
 import Skeleton from "react-loading-skeleton";
-import GlobalLoader from "./GlobalLoader";
+
 interface TagData {
   tagId: string;
   tagName: string;
@@ -22,8 +22,8 @@ export const SideBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { data, error, loading, refetch } = useFetch<TagData[]>(
-    "http://localhost:3000/api/v1/mostUsedTags"
+  const { data, error, loading } = useFetch<TagData[]>(
+    `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/mostUsedTags`
   );
   const { enableSnackbar } = useToast();
 

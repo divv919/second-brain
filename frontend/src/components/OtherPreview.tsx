@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import truncateWords from "../utils/truncateWords";
 import Fallback from "./ui/Fallback";
 
 const OtherPreview = ({ link }: { link: string }) => {
@@ -17,7 +16,7 @@ const OtherPreview = ({ link }: { link: string }) => {
       try {
         setLoading(true);
         const response = await fetch(
-          "http://localhost:3000/api/v1/preview?url=" + link
+          `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/preview?url=` + link
         );
         const responseData = await response.json();
         console.log("data fetched is : ", responseData);
@@ -27,6 +26,7 @@ const OtherPreview = ({ link }: { link: string }) => {
         setData(responseData);
       } catch (err) {
         setError(true);
+        console.log(err);
       } finally {
         setLoading(false);
       }

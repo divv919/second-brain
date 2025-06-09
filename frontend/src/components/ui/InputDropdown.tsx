@@ -5,12 +5,7 @@ interface InputDropdownProps {
   options: string[];
   ref: React.Ref<HTMLSelectElement>;
 }
-export const InputDropdown = ({
-  onChange,
-  label,
-  options,
-  ref,
-}: InputDropdownProps) => {
+export const InputDropdown = ({ label, options, ref }: InputDropdownProps) => {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium text-gray-700">{label}</label>

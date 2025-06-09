@@ -38,7 +38,7 @@ const SharedBrainPage = () => {
   const { enableSnackbar } = useToast();
 
   const { data, loading, error } = useFetch<SharedBrainData>(
-    `http://localhost:3000/api/v1/brain/${encodeURIComponent(
+    `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/brain/${encodeURIComponent(
       params.hash || -1
     )}?page=${currentPage}`
   );
@@ -48,21 +48,25 @@ const SharedBrainPage = () => {
       navigate("/auth?redirectTo=" + location.pathname);
     } else {
       try {
-        const response = await fetch("http://localhost:3000/api/v1/content", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: token } : {}),
-          },
-          body: JSON.stringify(data?.contentsByUser.data),
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/content`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: token } : {}),
+            },
+            body: JSON.stringify(data?.contentsByUser.data),
+          }
+        );
         if (!response.ok) {
           throw new Error();
         }
-        const json = await response.json();
+
         enableSnackbar("Imported successfully", "success");
       } catch (err) {
         enableSnackbar("Imported failed", "error");
+        console.log(err);
       }
     }
   };

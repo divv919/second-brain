@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { changeToTagFormat } from "../../utils/changeToTagFormat";
 import { CloseIcon } from "../../icons/CloseIcon";
+import { useAuth } from "../../hooks/useAuth";
 
 interface InputProps {
   placeholder: string;
@@ -32,15 +33,18 @@ export const InputTags = ({
   const [results, setResults] = useState<(string | undefined)[]>([]);
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
   const [limitReached, setLimitReached] = useState(false);
+  const { token } = useAuth();
   useEffect(() => {
     async function getAllTags() {
       try {
-        const response = await fetch("http://localhost:3000/api/v1/tags", {
-          headers: {
-            Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODIxYTUyYTUxOWU1NjdmYThmMzRkNjEiLCJpYXQiOjE3NDcwMzU0Mzh9.C5rS8L233xWV23KbNvkZGAQyrYOVysdxBuT_9yS5cbo",
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/tags`,
+          {
+            headers: {
+              ...(token ? { Authorization: token } : {}),
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Error getting all tags");
         }
@@ -120,7 +124,7 @@ export const InputTags = ({
           <input
             className="border-1 border-gray-300 outline-primary p-2 rounded-md w-full"
             placeholder={
-              limitReached ? "Cannot add more than 5 tags" : "Enter tags"
+              limitReached ? "Cannot add more than 5 tags" : placeholder
             }
             type={type}
             onKeyDown={handleKeyDown}

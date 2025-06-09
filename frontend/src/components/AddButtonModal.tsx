@@ -20,22 +20,25 @@ export const AddButtonModal = ({
   const { enableSnackbar } = useToast();
   async function handleSubmit() {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/content", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/content`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
 
-          ...(token ? { Authorization: token } : {}),
-        },
+            ...(token ? { Authorization: token } : {}),
+          },
 
-        body: JSON.stringify({
-          link: contentLink.current?.value,
-          title: contentTitle.current?.value,
-          type: contentType.current?.value,
-          tags: tags,
-        }),
-      });
+          body: JSON.stringify({
+            link: contentLink.current?.value,
+            title: contentTitle.current?.value,
+            type: contentType.current?.value,
+            tags: tags,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error();
       }

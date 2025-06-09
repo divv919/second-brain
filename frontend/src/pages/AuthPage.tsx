@@ -3,12 +3,7 @@ import { Input } from "../components/ui/Input";
 import { BrainIcon } from "../icons/BrainIcon";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import {
-  Navigate,
-  redirect,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ShowEyeIcon } from "../icons/ShowEye";
 import { HiddenEyeIcon } from "../icons/HiddenEye";
 import { z } from "zod";
@@ -76,6 +71,9 @@ export const AuthPage = () => {
         return;
       }
       setErrors({ username: undefined, password: undefined });
+      if (!usernameRef.current || !passwordRef.current) {
+        return;
+      }
       if (newUser) {
         const response = await signup(
           usernameRef.current.value,

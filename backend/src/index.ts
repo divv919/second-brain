@@ -12,7 +12,7 @@ import axios from "axios";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
     optionsSuccessStatus: 200,
     credentials: true,
   })

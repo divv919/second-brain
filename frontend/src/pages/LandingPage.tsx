@@ -1,6 +1,7 @@
 import { Button } from "../components/ui/Button";
 import { BrainIcon } from "../icons/BrainIcon";
 import { Link } from "react-router-dom";
+import Image from "../components/ui/Image";
 // import "dotenv/config";
 const LandingPage = () => {
   return (
@@ -33,12 +34,13 @@ const LandingPage = () => {
       <div className="px-8 md:px-10">
         <div className="grid lg:grid-cols-3 grid-cols-1 gap-8 ">
           <div className="p-6 py-8  bg-blue-50 rounded-2xl w-full  text-center md:text-start lg:text-center flex flex-col lg:flex-col md:flex-row  items-center md:items-start gap-6">
-            <img
-              className="aspect-16/9 w-full md:w-1/2 lg:w-full rounded-2xl"
-              src={`https://picsum.photos/id/${
-                Math.floor(Math.random() * 500) + 1
-              }/800/450`}
-            />
+            <div className="aspect-16/9 w-full md:w-1/2 lg:w-full rounded-2xl overflow-hidden">
+              <Image
+                link={`https://picsum.photos/id/${
+                  Math.floor(Math.random() * 500) + 1
+                }/800/450`}
+              />
+            </div>
             <div className="flex flex-col md:gap-4">
               <h1 className="text-lg  md:text-2xl text-blue-600 font-semibold tracking-tight">
                 Save Anything
@@ -52,12 +54,13 @@ const LandingPage = () => {
           </div>
 
           <div className="p-6 py-8 text-center md:text-start lg:text-center bg-blue-50 rounded-2xl w-full  flex flex-col lg:flex-col md:flex-row items-center md:items-start gap-6">
-            <img
-              className="aspect-16/9 w-full md:w-1/2 lg:w-full rounded-2xl"
-              src={`https://picsum.photos/id/${
-                Math.floor(Math.random() * 500) + 1
-              }/800/450`}
-            />
+            <div className="aspect-16/9 w-full md:w-1/2 lg:w-full rounded-2xl overflow-hidden">
+              <Image
+                link={`https://picsum.photos/id/${
+                  Math.floor(Math.random() * 500) + 1
+                }/800/450`}
+              />
+            </div>
             <div className="flex flex-col md:gap-4  ">
               <h1 className="text-lg  md:text-2xl text-blue-600 font-semibold tracking-tight">
                 Organize
@@ -71,12 +74,13 @@ const LandingPage = () => {
           </div>
 
           <div className="p-6 py-8 text-center md:text-start lg:text-center bg-blue-50 rounded-2xl w-full  flex flex-col lg:flex-col md:flex-row items-center md:items-start gap-6">
-            <img
-              className="aspect-16/9 w-full md:w-1/2 lg:w-full rounded-2xl"
-              src={`https://picsum.photos/id/${
-                Math.floor(Math.random() * 500) + 1
-              }/800/450`}
-            />
+            <div className="aspect-16/9 w-full md:w-1/2 lg:w-full rounded-2xl overflow-hidden">
+              <Image
+                link={`https://picsum.photos/id/${
+                  Math.floor(Math.random() * 500) + 1
+                }/800/450`}
+              />
+            </div>
             <div className="flex flex-col md:gap-4  ">
               <h1 className="text-lg  md:text-2xl text-blue-600 font-semibold tracking-tight">
                 Rich Previews

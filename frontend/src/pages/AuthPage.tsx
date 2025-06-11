@@ -9,7 +9,7 @@ import { HiddenEyeIcon } from "../icons/HiddenEye";
 import { z } from "zod";
 import { useToast } from "../hooks/useToast";
 import GlobalLoader from "../components/ui/GlobalLoader";
-import Image from "../components/ui/Image";
+// import Image from "../components/ui/Image";
 const INPUT_SCHEMA = z.object({
   username: z
     .string()

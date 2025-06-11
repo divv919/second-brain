@@ -39,7 +39,7 @@ const MainContent = () => {
   let titleToShow;
 
   if (pathname === "/home/twitter") {
-    urlFrag = "tweet";
+    urlFrag = "twitter";
     titleToShow = "Twitter";
   } else if (pathname === "/home/youtube") {
     urlFrag = "youtube";
@@ -88,13 +88,13 @@ const MainContent = () => {
       if (!response.ok) {
         throw new Error("Error deleting content");
       }
-      const json = await response.json();
-      console.log(json);
+
+      enableSnackbar("Deleted successfully", "success");
 
       refetch();
     } catch (err) {
       console.log(err);
-      enableSnackbar("Deleted Failed", "error");
+      enableSnackbar("Delete Failed", "error");
     }
   }
 

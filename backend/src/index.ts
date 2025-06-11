@@ -108,10 +108,10 @@ app.get("/api/v1/content", authMiddleware, async (req, res) => {
   const filter: { userId?: string; type?: string | {}; tags?: {} } = {
     userId: req.userId,
   };
-  if (type === "youtube" || type === "tweet") {
+  if (type === "youtube" || type === "twitter") {
     filter.type = type;
   } else if (type === "other") {
-    filter.type = { $nin: ["tweet", "youtube"] };
+    filter.type = { $nin: ["twitter", "youtube"] };
   } else if (type === "tag") {
     const tagId = await Tag.findOne({ name: req.query.value });
     console.log(tagId);

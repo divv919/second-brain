@@ -49,7 +49,7 @@ export const Input = ({
           disabled={loading}
           maxLength={Number(maxLength)}
         />
-        <div className="absolute bottom-1 right-2 cursor-pointer bg-blue-50 ">
+        <div className="absolute bottom-1 right-2  bg-blue-50 ">
           {sideButton}
         </div>
         {showError && errors?.length && (
@@ -72,7 +72,7 @@ export const Input = ({
                 <p className="text-wrap">- {err}</p>
               ))}
               <div
-                className="absolute top-2 right-2"
+                className="absolute top-2 right-2 cursor-pointer"
                 onClick={() => setShowError(false)}
               >
                 <CloseIcon />

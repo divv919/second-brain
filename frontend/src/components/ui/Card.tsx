@@ -10,7 +10,7 @@ import formatToDate from "../../utils/formatToDate";
 import truncateWords from "../../utils/truncateWords";
 import { YoutubeIcon } from "../../icons/YoutubeIcon";
 import { LinkIcon } from "../../icons/LinkIcon";
-import { Link } from "react-router-dom";
+
 import { useToast } from "../../hooks/useToast";
 interface CardProps {
   title: string;
@@ -77,7 +77,7 @@ export const Card = ({
             className="hover:text-primary cursor-pointer"
             onClick={handleCopyLink}
           >
-            <ShareIcon />
+            <ShareIcon size="md" />
           </div>
           {onDelete && (
             <div

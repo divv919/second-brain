@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Fallback from "./ui/Fallback";
-
+import Skeleton from "react-loading-skeleton";
+import Image from "./ui/Image";
 const OtherPreview = ({ link }: { link: string }) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,23 +37,23 @@ const OtherPreview = ({ link }: { link: string }) => {
   if (error) {
     return (
       <div className="h-full w-full">
-        {/* <Fallback text="No Preview" /> */}
-        <img
-          src={`https://picsum.photos/id/${Math.floor(
-            Math.random() * 1000
-          )}/800/450`}
-        />
+        <Fallback text="No Preview" />
       </div>
     );
   }
   if (loading) {
-    return <div>Loading preview</div>;
+    return (
+      <div className="w-full h-full">
+        <Skeleton height="100%" />
+      </div>
+    );
   }
 
   return (
     <div>
-      <div className=" aspect-16/9 w-full">
-        <img
+      <div className="w-full aspect-video ">
+        {/* <img
+          className="w-full h-full "
           src={
             data.img === null
               ? `https://picsum.photos/id/${Math.floor(
@@ -60,7 +61,8 @@ const OtherPreview = ({ link }: { link: string }) => {
                 )}/800/450`
               : data.img
           }
-        />
+        /> */}
+        <Image link={data.img || undefined} />
       </div>
     </div>
   );

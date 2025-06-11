@@ -19,6 +19,7 @@ export const ShareBrainModal = ({
   const [loading, setLoading] = useState(false);
   const [actualState, setActualState] = useState(false);
   const { token } = useAuth();
+  const [btnLoading, setBtnLoading] = useState(false);
   const { enableSnackbar } = useToast();
   useEffect(() => {
     console.log("Loading : ", loading);
@@ -103,6 +104,7 @@ export const ShareBrainModal = ({
   }
   async function handleCopy() {
     try {
+      setBtnLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/brain/share`,
         {
@@ -126,6 +128,8 @@ export const ShareBrainModal = ({
       enableSnackbar("Copied successfully", "success");
     } catch (err) {
       console.log(err);
+    } finally {
+      setBtnLoading(false);
     }
   }
   return (
@@ -160,9 +164,10 @@ export const ShareBrainModal = ({
             <Button
               text="Copy Link"
               variant="primary"
-              endIcon={<CopyIcon />}
+              endIcon={<CopyIcon size="sm" />}
               size="md"
               onClick={handleCopy}
+              loading={btnLoading}
             />
             <div className="text-center text-gray-800 text-md">
               {totalContents} Contents will be shared

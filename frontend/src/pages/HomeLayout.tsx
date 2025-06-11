@@ -11,9 +11,20 @@ import { LinkIcon } from "../icons/LinkIcon";
 import LogoutIcon from "../icons/LogoutIcon";
 import { SideBarItemMobile } from "../components/ui/SideBarItemMobile";
 import { CloseIcon } from "../icons/CloseIcon";
+import { HomeIcon } from "../icons/HomeIcon";
+import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/useToast";
 export default function HomeLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { enableSnackbar } = useToast();
+
+  const handleLogout = () => {
+    logout();
+    enableSnackbar("Logged out successfully", "success");
+    navigate("/auth");
+  };
   return (
     <div className="flex ">
       <div className="hidden lg:block w-1/4 h-screen">
@@ -26,12 +37,21 @@ export default function HomeLayout() {
             {isSidebarOpen && (
               <div className="w-full  flex flex-col justify-center items-center   h-screen bg-blue-50 fixed z-100 top-0 left-0 gap-4">
                 <div
-                  className="absolute top-10 right-10 text-blue-900"
+                  className="absolute top-10 right-10 text-blue-900 cursor-pointer"
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <CloseIcon size="md" />
                 </div>
-                {/* <div className="w-fit bg-red-500"> */}
+                <SideBarItemMobile
+                  isActive={location.pathname === "/home/dashboard"}
+                  icon={<HomeIcon size="md" />}
+                  title="Dashboard"
+                  onClick={() => {
+                    navigate("/home/dashboard");
+                    setIsSidebarOpen(false);
+                  }}
+                />
+
                 <SideBarItemMobile
                   isActive={location.pathname === "/home/twitter"}
                   icon={<TwitterIcon size="md" />}
@@ -62,8 +82,8 @@ export default function HomeLayout() {
                 <SideBarItemMobile
                   icon={<LogoutIcon size="md" />}
                   title="Logout"
+                  onClick={handleLogout}
                 />
-                {/* </div> */}
               </div>
             )}
             <div className="flex gap-3 cursor-pointer text-blue-600">
@@ -74,7 +94,10 @@ export default function HomeLayout() {
                 Second Brain
               </div>
             </div>
-            <div onClick={() => setIsSidebarOpen(true)}>
+            <div
+              className="cursor-pointer"
+              onClick={() => setIsSidebarOpen(true)}
+            >
               <MenuIcon />
             </div>
           </div>

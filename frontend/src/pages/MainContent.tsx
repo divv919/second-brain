@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddButtonModal } from "../components/AddButtonModal";
 import { ShareBrainModal } from "../components/ShareBrainModal";
 import { Button } from "../components/ui/Button";
@@ -67,6 +67,9 @@ const MainContent = () => {
     `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/content?type=all`
   );
 
+  useEffect(() => {
+    allData.refetch();
+  }, [data]);
   async function handleDelete(id: string) {
     try {
       console.log("Delete handler running");
@@ -94,6 +97,8 @@ const MainContent = () => {
       enableSnackbar("Deleted Failed", "error");
     }
   }
+
+  console.log("all data total ", allData.data?.totalDocuments);
   return (
     <>
       {currentOpenModal === "add_link" && (
@@ -129,7 +134,7 @@ const MainContent = () => {
               variant="secondary"
               size="md"
               text="Share Brain"
-              startIcon={<ShareIcon />}
+              startIcon={<ShareIcon size="md" />}
               onClick={() => setCurrentOpenModal("share")}
             />
             <Button
@@ -144,7 +149,7 @@ const MainContent = () => {
             <Button
               variant="secondary"
               size="md"
-              startIcon={<ShareIcon />}
+              startIcon={<ShareIcon size="md" />}
               onClick={() => setCurrentOpenModal("share")}
             />
             <Button

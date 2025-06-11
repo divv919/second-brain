@@ -9,6 +9,7 @@ import { HiddenEyeIcon } from "../icons/HiddenEye";
 import { z } from "zod";
 import { useToast } from "../hooks/useToast";
 import GlobalLoader from "../components/ui/GlobalLoader";
+import Image from "../components/ui/Image";
 const INPUT_SCHEMA = z.object({
   username: z
     .string()
@@ -34,13 +35,14 @@ const INPUT_SCHEMA = z.object({
 export const AuthPage = () => {
   const { enableSnackbar } = useToast();
   const [newUser, setNewUser] = useState(false);
+
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const [isSignedUp, setIsSignedUp] = useState(false);
   const { login, signup, user, loading } = useAuth();
   const navigate = useNavigate();
-
+  const [btnLoading, setBtnLoading] = useState(false);
   const [errors, setErrors] = useState<{
     password: string[] | undefined;
     username: string[] | undefined;
@@ -59,6 +61,7 @@ export const AuthPage = () => {
 
   const handleSubmit = async () => {
     try {
+      setBtnLoading(true);
       const formData = {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,
@@ -108,6 +111,8 @@ export const AuthPage = () => {
       //put it on toast
       console.log(err);
       enableSnackbar("Internal Server error", "error");
+    } finally {
+      setBtnLoading(false);
     }
   };
 
@@ -158,7 +163,10 @@ export const AuthPage = () => {
                     type={passwordShow ? "text" : "password"}
                     placeholder="Enter password"
                     sideButton={
-                      <button onClick={() => setPasswordShow((curr) => !curr)}>
+                      <button
+                        className="cursor-pointer"
+                        onClick={() => setPasswordShow((curr) => !curr)}
+                      >
                         {passwordShow ? <ShowEyeIcon /> : <HiddenEyeIcon />}
                       </button>
                     }
@@ -169,6 +177,7 @@ export const AuthPage = () => {
                   variant="primary"
                   text={newUser ? "Sign up" : "Login"}
                   onClick={handleSubmit}
+                  loading={btnLoading}
                 />
                 {!isSignedUp && (
                   <div className="text-md  text-center">

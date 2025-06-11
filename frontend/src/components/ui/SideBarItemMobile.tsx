@@ -15,7 +15,7 @@ export const SideBarItemMobile = ({
   return (
     <div
       onClick={onClick}
-      className={`flex justify-start  items-center text-md gap-3 text-blue-900 rounded-md p-2 ${activeStyles}`}
+      className={`cursor-pointer flex justify-start  items-center text-md gap-3 text-blue-900 rounded-md p-2 ${activeStyles}`}
     >
       <div className="flex ">{icon}</div>
       <div className="text-lg font-regular ">{title}</div>

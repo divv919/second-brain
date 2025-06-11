@@ -75,6 +75,21 @@ const SharedBrainPage = () => {
       }
     }
   };
+  if (error) {
+    return (
+      <div className="min-h-screen p-10 bg-blue-50 flex flex-col items-center gap-6">
+        <div className="w-1/3 min-w-80 max-w-200 aspect-4/3 ">
+          <NotFound />
+        </div>
+        <div className="flex flex-col gap-6 items-center">
+          <div className="text-xl">The content is not publicly available</div>
+          <Link to="/home">
+            <Button text="Dashboard" variant="primary" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (loading || !data) {
     return (
@@ -109,21 +124,6 @@ const SharedBrainPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen p-10 bg-blue-50 flex flex-col items-center gap-6">
-        <div className="w-1/3 min-w-80 max-w-200 aspect-4/3 ">
-          <NotFound />
-        </div>
-        <div className="flex flex-col gap-6 items-center">
-          <div className="text-xl">The content is not publicly available</div>
-          <Link to="/home">
-            <Button text="Dashboard" variant="primary" />
-          </Link>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="min-h-screen p-10 bg-blue-50 flex flex-col gap-6">
       <div className="flex justify-between">

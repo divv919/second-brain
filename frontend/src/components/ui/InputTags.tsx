@@ -55,10 +55,10 @@ export const InputTags = ({
       }
     }
     getAllTags();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
-    if (tags.length >= 5) {
+    if (tags.length >= 3) {
       setLimitReached(true);
     } else {
       setLimitReached(false);
@@ -68,14 +68,14 @@ export const InputTags = ({
   useEffect(() => {
     const newResults: string[] = [];
     allTags?.map((tag) => {
-      const query = value.trim();
+      const query = value.trim().toLowerCase();
       const fullQuery = tag.name;
       if (fullQuery.includes(query)) {
         newResults.push(fullQuery);
       }
     });
     setResults(newResults);
-  }, [value]);
+  }, [value, allTags]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -121,24 +121,40 @@ export const InputTags = ({
           ))}
         </div>
         <div className="relative">
-          <input
-            className="border-1 border-gray-300 outline-primary p-2 rounded-md w-full"
-            placeholder={
-              limitReached ? "Cannot add more than 5 tags" : placeholder
-            }
-            type={type}
-            onKeyDown={handleKeyDown}
-            onChange={(e) => onChange?.(e.target.value)}
-            value={value}
-            onFocus={() => {
-              setShowSuggestion(true);
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              const val = changeToTagFormat(
+                (e.target as HTMLInputElement).value,
+                false
+              );
+              if (val !== "" && !tags.find((tag) => tag === val)) {
+                setTags([...tags, val]);
+              }
+              // (e.target as HTMLInputElement).value = "";
+              onChange?.("");
             }}
-            maxLength={Number(maxLength)}
-            disabled={tags.length >= 5}
-            onBlur={() => {
-              setShowSuggestion(false);
-            }}
-          />
+          >
+            <input
+              className="border-1 border-gray-300 outline-primary p-2 rounded-md w-full"
+              placeholder={
+                limitReached ? "Cannot add more than 3 tags" : placeholder
+              }
+              type={type}
+              onKeyDown={handleKeyDown}
+              onChange={(e) => onChange?.(e.target.value)}
+              value={value}
+              onFocus={() => {
+                setShowSuggestion(true);
+              }}
+              maxLength={Number(maxLength)}
+              disabled={tags.length >= 3}
+              onBlur={() => {
+                setShowSuggestion(false);
+              }}
+            />
+          </form>
 
           {!limitReached && !!results.length && showSuggestion && (
             <div className="rounded-md  absolute w-full flex flex-col gap-1 p-1  border  border-gray-300 bg-surface">

@@ -9,7 +9,7 @@ import { HiddenEyeIcon } from "../icons/HiddenEye";
 import { z } from "zod";
 import { useToast } from "../hooks/useToast";
 import GlobalLoader from "../components/ui/GlobalLoader";
-const InputSchema = z.object({
+const INPUT_SCHEMA = z.object({
   username: z
     .string()
     .min(3, "Username must be at least 3 characters long")
@@ -63,7 +63,7 @@ export const AuthPage = () => {
         username: usernameRef.current?.value,
         password: passwordRef.current?.value,
       };
-      const result = InputSchema.safeParse(formData);
+      const result = INPUT_SCHEMA.safeParse(formData);
       if (!result.success) {
         const { username, password } = result.error.flatten().fieldErrors;
 

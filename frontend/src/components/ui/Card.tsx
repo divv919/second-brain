@@ -41,27 +41,33 @@ export const Card = ({
       console.log(err);
     }
   };
-  console.log("console from card : ", createdAt);
+  const extractTweetId = (link: string) => {
+    const match = link.match(/x\.com\/[^/]+\/status\/(\d+)/);
+    return match ? match[1] : "";
+  };
+  const extractYoutubeId = (link: string) => {
+    const regex = /(?:youtube\.com\/.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = link.match(regex);
+    return match ? match[1] : null;
+  };
   return (
-    <div className="w-full aspect-5/4  rounded-md shadow-md bg-white p-6 flex flex-col gap-4 ">
-      <div className="flex justify-between  w-full">
+    <div className="w-full aspect-5/4  rounded-md shadow-md bg-white p-4 flex flex-col gap-4 ">
+      <div className="flex justify-between gap-4 w-full">
         <div className="flex items-center gap-2  ">
           <div className="text-gray-600">
-            {type === "twitter" && <TwitterIcon size="md" />}
-            {type === "youtube" && <YoutubeIcon size="md" />}
+            {type === "twitter" && <TwitterIcon size="sm" />}
+            {type === "youtube" && <YoutubeIcon size="sm" />}
 
-            {type === "other" && <LinkIcon size="md" />}
+            {type === "other" && <LinkIcon size="sm" />}
           </div>
-          <Link to={link}>
-            <div
-              className="text-md lg:text-lg  font-medium h-14 flex items-center cursor-pointer hover:text-primary "
-              title={title}
-            >
-              {truncateWords(title, 7)}
-            </div>
-          </Link>
+          <div
+            className="text-md lg:text-md h-10  font-medium  flex items-center  "
+            title={title}
+          >
+            {truncateWords(title, 7)}
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-gray-600 ">
+        <div className="flex items-center gap-3 text-gray-600 ">
           <div className="hover:text-primary cursor-pointer">
             <a target="_blank" href={link}>
               <OpenInTabIcon size="md" />
@@ -87,7 +93,6 @@ export const Card = ({
       </div>
       <div className="aspect-16/9 w-full rounded-md overflow-hidden">
         {type === "twitter" ? (
-          // <TwitterPreview link={link} />
           <div className="w-full h-full relative">
             <div className=" w-full h-full bg-gradient-to-t from-white from-0% to-99% to-transparent absolute z-10">
               <div className="absolute bottom-5 left-1/2 cursor-pointer text-gray-600">
@@ -95,9 +100,18 @@ export const Card = ({
               </div>
             </div>
             <div className="light mt-[-20px] ">
-              <Tweet id="1928484936417255711" />
+              <Tweet id={extractTweetId(link)} />
             </div>
           </div>
+        ) : type === "youtube" ? (
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube.com/embed/${extractYoutubeId(link)}`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          ></iframe>
         ) : (
           <OtherPreview link={link} />
         )}
@@ -106,7 +120,7 @@ export const Card = ({
       <div className="text-sm text-gray-600">
         Added on {formatToDate(createdAt)}
       </div>
-      <div className="flex w-full flex-wrap gap-2 ">
+      <div className="flex w-full flex-wrap gap-2 h-5">
         {tags?.map((tag, index) => {
           if (index >= 7) {
             return;

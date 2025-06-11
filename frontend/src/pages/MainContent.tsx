@@ -158,7 +158,7 @@ const MainContent = () => {
 
         <div className="w-full">
           {loading ? (
-            <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+            <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
               <div className="flex justify-center">
                 <div className="w-full">
                   <Skeleton height={300} />
@@ -170,12 +170,20 @@ const MainContent = () => {
               <div className="w-full">
                 <Skeleton height={300} />
               </div>
+              <div className="flex justify-center">
+                <div className="w-full">
+                  <Skeleton height={300} />
+                </div>
+              </div>
+              <div className="w-full">
+                <Skeleton height={300} />
+              </div>
               <div className="w-full">
                 <Skeleton height={300} />
               </div>
             </div>
           ) : data?.data.length ? (
-            <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+            <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
               {data?.data.map(
                 ({ link, title, type, tags, createdAt, _id }: Content) => {
                   return (

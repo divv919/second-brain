@@ -9,6 +9,7 @@ interface ButtonProps {
   endIcon?: ReactElement;
   startIcon?: ReactElement;
   onClick?: () => void;
+  loading?: boolean;
 }
 
 const variantStyles: Record<Variant, string> = {
@@ -22,7 +23,8 @@ const variantStyles: Record<Variant, string> = {
 //   lg: "text-base px-6 py-3 h-12",
 // };
 const defaultStyles =
-  "rounded-md flex gap-2 font-semibold justify-center items-center cursor-pointer text-xs px-3 py-1 h-8 md:text-sm md:px-3 md:py-2 md:h-10 lg:h-10 lg:py-2 lg:text-base";
+  "flex gap-2 justify-center items-center cursor-pointer rounded-md text-xs px-3 py-1 h-8 md:text-sm md:px-3 md:py-2 md:h-10 lg:h-10 lg:py-2 lg:text-base";
+const disabledStyles = "bg-blue-900 hover:bg-blue-900 cursor-progress";
 
 export const Button = ({
   variant,
@@ -31,17 +33,28 @@ export const Button = ({
   endIcon,
   startIcon,
   onClick,
+  loading,
 }: ButtonProps) => {
   return (
     <button
-      className={`${variantStyles[variant]}  ${defaultStyles}`}
+      disabled={loading}
+      className={`${variantStyles[variant]}  ${defaultStyles} ${
+        loading ? disabledStyles : ""
+      }`}
       onClick={onClick}
     >
-      {startIcon ? (
-        <div className=" flex items-center  ">{startIcon}</div>
-      ) : null}
-      {text && <div className="flex self-center items-center ">{text}</div>}
-      {endIcon ? <div className=" flex items-center ">{endIcon}</div> : null}
+      <div
+        className={`${
+          loading ? "opacity-100" : "opacity-0"
+        } absolute w-4 h-4 border-2 animate-spin border-t-transparent border-white rounded-full`}
+      ></div>
+      <div className={`${loading ? "opacity-0" : "opacity-100"} flex gap-2`}>
+        {startIcon ? (
+          <div className=" flex items-center  ">{startIcon}</div>
+        ) : null}
+        {text && <div className="flex self-center items-center   ">{text}</div>}
+        {endIcon ? <div className=" flex items-center ">{endIcon}</div> : null}
+      </div>
     </button>
   );
 };

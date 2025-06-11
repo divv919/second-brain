@@ -36,7 +36,12 @@ const OtherPreview = ({ link }: { link: string }) => {
   if (error) {
     return (
       <div className="h-full w-full">
-        <Fallback text="No Preview" />
+        {/* <Fallback text="No Preview" /> */}
+        <img
+          src={`https://picsum.photos/id/${Math.floor(
+            Math.random() * 1000
+          )}/800/450`}
+        />
       </div>
     );
   }
@@ -57,8 +62,6 @@ const OtherPreview = ({ link }: { link: string }) => {
           }
         />
       </div>
-      {/* <div>{data.title?.replace("- YouTube", "") || "Title not found"}</div> */}
-      {/* <div>{truncateWords(data.description || "Description not found", 5)}</div> */}
     </div>
   );
 };

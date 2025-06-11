@@ -95,7 +95,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     return user.role;
   };
-  const username = () => {
+  const getUsername = () => {
     if (!user) {
       return "Error getting username";
     }
@@ -104,7 +104,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     token,
     loading,
-    username,
+    getUsername,
     user,
     login,
     logout,

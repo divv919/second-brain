@@ -293,8 +293,8 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
         userId: isLinkActive.userId,
       })
         .skip((page - 1) * limit)
-        .limit(limit)
-        .populate("tags");
+        .limit(limit);
+
       res.status(201).json({
         userDetails: isLinkActive,
         contentsByUser: { totalPages, data: result },

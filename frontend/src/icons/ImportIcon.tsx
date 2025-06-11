@@ -1,5 +1,7 @@
-const defaultStyles = "size-2 md:size-3 lg:size-4 xl:size-5";
-export const ImportIcon = () => {
+import { sizeVariants, type IconProps } from ".";
+
+// const defaultStyles = "size-2 md:size-3 lg:size-4 xl:size-5";
+export const ImportIcon = ({ size = "sm" }: IconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -7,7 +9,7 @@ export const ImportIcon = () => {
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      className={defaultStyles}
+      className={sizeVariants[size]}
     >
       <path
         stroke-linecap="round"

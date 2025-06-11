@@ -34,7 +34,7 @@ const SharedBrainPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const location = useLocation();
-  const { token } = useAuth();
+  const { token, getUsername } = useAuth();
   const { enableSnackbar } = useToast();
 
   const { data, loading, error } = useFetch<SharedBrainData>(
@@ -48,6 +48,11 @@ const SharedBrainPage = () => {
       navigate("/auth?redirectTo=" + location.pathname);
     } else {
       try {
+        if (getUsername() === data?.userDetails?.userId?.username) {
+          enableSnackbar("Cannot import own content", "error");
+          return;
+        }
+
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_ROOT_URL}/api/v1/content`,
           {
@@ -71,6 +76,39 @@ const SharedBrainPage = () => {
     }
   };
 
+  if (loading || !data) {
+    return (
+      <div className="min-h-screen  p-10 bg-blue-50 flex flex-col gap-6">
+        <main className="flex justify-between">
+          <div className="w-1/2 ">
+            <Skeleton height={30} />
+          </div>
+          <div className="w-1/8">
+            <Skeleton height={30} />
+          </div>
+        </main>
+        <main>
+          <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+            <div className="flex justify-center">
+              <div className="w-full">
+                <Skeleton height={300} />
+              </div>
+            </div>
+            <div className="w-full">
+              <Skeleton height={300} />
+            </div>
+            <div className="w-full">
+              <Skeleton height={300} />
+            </div>
+            <div className="w-full">
+              <Skeleton height={300} />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div className="min-h-screen p-10 bg-blue-50 flex flex-col items-center gap-6">
@@ -89,66 +127,47 @@ const SharedBrainPage = () => {
   return (
     <div className="min-h-screen p-10 bg-blue-50 flex flex-col gap-6">
       <div className="flex justify-between">
-        {loading ? (
-          <div className="max-w-300 min-w-100">
-            <Skeleton height={30} />
+        <div className="text-xl lg:text-2xl text-wrap text-blue-600 font-bold flex flex-col items-start md:flex-row gap-1 lg:gap-2 md:items-center">
+          {data?.userDetails?.userId?.username}
+          's Links
+          <div className="text-xl font-normal">
+            ({data?.contentsByUser.data.length} links)
           </div>
-        ) : (
-          <div className="text-xl lg:text-2xl text-blue-600 font-bold flex gap-1 lg:gap-2 items-center">
-            {data?.userDetails?.userId?.username}
-            's Links
-            <div className="text-xl font-normal">
-              ({data?.contentsByUser.data.length} links)
-            </div>
-          </div>
-        )}
+        </div>
 
-        {loading ? (
-          <div className="max-w-150 min-w-50">
-            <Skeleton height={30} />
+        <>
+          <div className="md:hidden">
+            <Button
+              text=""
+              variant="primary"
+              startIcon={<ImportIcon size="md" />}
+              onClick={handleImport}
+            />
           </div>
-        ) : (
-          <Button
-            text="Import Content"
-            variant="primary"
-            startIcon={<ImportIcon />}
-            onClick={handleImport}
-          />
-        )}
+          <div className="hidden md:block">
+            <Button
+              text="Import Content"
+              variant="primary"
+              startIcon={<ImportIcon size="md" />}
+              onClick={handleImport}
+            />
+          </div>
+        </>
       </div>
 
       <div>
-        {loading ? (
-          <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            <div className="flex justify-center">
-              <div className="w-full">
-                <Skeleton height={300} />
-              </div>
-            </div>
-            <div className="w-full">
-              <Skeleton height={300} />
-            </div>
-            <div className="w-full">
-              <Skeleton height={300} />
-            </div>
-            <div className="w-full">
-              <Skeleton height={300} />
-            </div>
-          </div>
-        ) : (
-          <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {data?.contentsByUser.data.map((content) => {
-              return (
-                <Card
-                  createdAt={content.createdAt}
-                  type={content.type}
-                  title={content.title || ""}
-                  link={content.link}
-                />
-              );
-            })}
-          </div>
-        )}
+        <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+          {data?.contentsByUser.data.map((content) => {
+            return (
+              <Card
+                createdAt={content.createdAt}
+                type={content.type}
+                title={content.title || ""}
+                link={content.link}
+              />
+            );
+          })}
+        </div>
       </div>
       <Paginate
         totalPages={data?.contentsByUser.totalPages}

@@ -3,7 +3,7 @@ type message = {
   message: string;
 };
 type AuthContextType = {
-  username: () => string;
+  getUsername: () => string;
   login: (
     username: string,
     password: string

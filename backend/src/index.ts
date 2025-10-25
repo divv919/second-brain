@@ -12,11 +12,18 @@ import axios from "axios";
 const app = express();
 app.use(
   cors({
-    origin: true,
-    optionsSuccessStatus: 200,
+    origin: [
+      "https://second-brain-alpha-ebon.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 200,
   })
 );
+
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 

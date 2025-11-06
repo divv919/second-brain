@@ -1,167 +1,180 @@
-import express from "express";
-import "dotenv/config";
-import { z } from "zod";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import { User, Tag, Content, ShareLink, mongoose } from "./db";
-import authMiddleware from "./authMiddleware";
-import * as cheerio from "cheerio";
-import cors from "cors";
-import axios from "axios";
+import express from 'express'
+import 'dotenv/config'
+import { z } from 'zod'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import { User, Tag, Content, ShareLink, mongoose } from './db'
+import authMiddleware from './authMiddleware'
+import * as cheerio from 'cheerio'
+import cors from 'cors'
+import axios from 'axios'
+import {
+  embedAndQuery,
+  embedAndUpsert,
+  initCollection,
+} from './services/vector-db.service'
 
-const app = express();
+const app = express()
+initCollection()
 app.use(
   cors({
     origin: [
-      "https://second-brain-alpha-ebon.vercel.app",
-      "http://localhost:5173",
-      "http://localhost:3000",
+      'https://second-brain-alpha-ebon.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:3000',
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 200,
   })
-);
+)
 
-app.use(express.json());
+app.use(express.json())
 // app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-  console.log("Incoming Content-Type:", req.headers["content-type"]);
-  console.log("Body:", req.body);
-  next();
-});
+  console.log('Incoming Content-Type:', req.headers['content-type'])
+  console.log('Body:', req.body)
+  next()
+})
 
-const limit = 12;
+const limit = 12
 
-app.post("/api/v1/signup", async (req, res) => {
-  const { username, password } = req.body;
+app.post('/api/v1/signup', async (req, res) => {
+  const { username, password } = req.body
 
   const requestBodySchema = z.object({
     username: z
       .string()
-      .min(3, "Username must be at least 3 characters long")
-      .max(20, "Username must not exceed 20 characters")
+      .min(3, 'Username must be at least 3 characters long')
+      .max(20, 'Username must not exceed 20 characters')
       .regex(
         /^[a-zA-Z0-9_]+$/,
-        "Username can only contain letters, numbers, and underscores"
+        'Username can only contain letters, numbers, and underscores'
       ),
     password: z
       .string()
-      .min(6, "Password must be at least 6 characters long")
-      .max(100, "Password must not exceed 100 characters")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
+      .min(6, 'Password must be at least 6 characters long')
+      .max(100, 'Password must not exceed 100 characters')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number')
       .regex(
         /[^a-zA-Z0-9]/,
-        "Password must contain at least one special character"
+        'Password must contain at least one special character'
       ),
-  });
-  const result = requestBodySchema.safeParse(req.body);
+  })
+  const result = requestBodySchema.safeParse(req.body)
   if (!result.success) {
-    res.status(411).json({ message: result.error });
-    return;
+    res.status(411).json({ message: result.error })
+    return
   }
   try {
     const alreadyExists = await User.findOne({
       username,
-    });
+    })
     if (alreadyExists) {
-      res.status(403).json({ message: "User already exists" });
-      return;
+      res.status(403).json({ message: 'User already exists' })
+      return
     }
     const hashedPassword = await bcrypt.hash(
       password,
       Number(process.env.SALT_ROUNDS) || 10
-    );
+    )
     await User.create({
       username: username,
       password: hashedPassword,
-    });
-    res.status(200).json({ message: "Signed up successfully" });
+    })
+    res.status(200).json({ message: 'Signed up successfully' })
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err });
+    console.log(err)
+    res.status(500).json({ message: err })
   }
-});
-app.post("/api/v1/signin", async (req, res) => {
-  const { username, password } = req.body;
+})
+app.post('/api/v1/signin', async (req, res) => {
+  const { username, password } = req.body
   try {
-    const userExists = await User.findOne({ username });
+    const userExists = await User.findOne({ username })
     if (!userExists) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
+      res.status(404).json({ message: 'User does not exist' })
+      return
     }
-    const passwordMatch = await bcrypt.compare(password, userExists.password);
+    const passwordMatch = await bcrypt.compare(password, userExists.password)
     if (!passwordMatch) {
-      res.status(403).json({ message: "Invalid password" });
+      res.status(403).json({ message: 'Invalid password' })
     }
     const token = jwt.sign(
       { userId: userExists._id },
-      process.env.JWT_SECRET || "DEFAULT_SECRET"
-    );
-    res.status(200).json({ jwt: token });
+      process.env.JWT_SECRET || 'DEFAULT_SECRET'
+    )
+    res.status(200).json({ jwt: token })
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err });
+    console.log(err)
+    res.status(500).json({ message: err })
   }
-});
-app.get("/api/v1/content", authMiddleware, async (req, res) => {
-  const type = req.query.type;
-  const page = Number(req.query.page) || 1;
+})
+app.get('/api/v1/content', authMiddleware, async (req, res) => {
+  const type = req.query.type
+  const page = Number(req.query.page) || 1
 
   const filter: { userId?: string; type?: string | {}; tags?: {} } = {
     userId: req.userId,
-  };
-  if (type === "youtube" || type === "twitter") {
-    filter.type = type;
-  } else if (type === "other") {
-    filter.type = { $nin: ["twitter", "youtube"] };
-  } else if (type === "tag") {
-    const tagId = await Tag.findOne({ name: req.query.value });
-    console.log(tagId);
-    filter.tags = tagId?._id || 123;
-  } else if (type !== "all") {
-    res.status(404).json({ message: "No content for this type" });
-    return;
+  }
+  if (type === 'youtube' || type === 'twitter') {
+    filter.type = type
+  } else if (type === 'other') {
+    filter.type = { $nin: ['twitter', 'youtube'] }
+  } else if (type === 'tag') {
+    const tagId = await Tag.findOne({ name: req.query.value })
+    console.log(tagId)
+    filter.tags = tagId?._id || 123
+  } else if (type !== 'all') {
+    res.status(404).json({ message: 'No content for this type' })
+    return
   }
 
   try {
-    const totalDocuments = await Content.countDocuments(filter);
+    const totalDocuments = await Content.countDocuments(filter)
     const result = await Content.find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate("tags");
-    console.log("total docs : ", totalDocuments);
+      .populate('tags')
+    console.log('total docs : ', totalDocuments)
     res.status(200).json({
       totalDocuments,
       oneMinusTotalDocs: totalDocuments - 1,
       totalPages: Math.ceil(totalDocuments / limit),
       data: result,
-    });
+    })
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
+})
 
-app.post("/api/v1/content", authMiddleware, async (req, res) => {
+app.post('/api/v1/content', authMiddleware, async (req, res) => {
   if (Array.isArray(req.body)) {
     try {
       const response = Promise.all(
         req.body.map(async (content) => {
+          await embedAndUpsert({
+            userId: req.userId,
+            type: content.type,
+            link: content.link,
+            title: content.title,
+            tags: content.tags,
+          })
           const tagIds = await Promise.all(
             content.tags.map(async (tag: string) => {
-              const tagExists = await Tag.findOne({ name: tag });
+              const tagExists = await Tag.findOne({ name: tag })
               // console.log(typeof tagExists);
               if (tagExists) {
-                return tagExists._id;
+                return tagExists._id
               }
-              const createdTag = await Tag.create({ name: tag });
-              return createdTag._id;
+              const createdTag = await Tag.create({ name: tag })
+              return createdTag._id
             })
-          );
+          )
 
           const result = await Content.create({
             userId: req.userId,
@@ -169,34 +182,41 @@ app.post("/api/v1/content", authMiddleware, async (req, res) => {
             link: content.link,
             title: content.title,
             tags: content.tagIds,
-          });
+          })
         })
-      );
+      )
       res
         .status(200)
-        .json({ message: "Content added successfully", content: response });
-      return;
+        .json({ message: 'Content added successfully', content: response })
+      return
     } catch (err) {
       // console.log("Error posting contnet", err);
-      res.status(500).json({ message: err });
+      res.status(500).json({ message: err })
     }
   }
 
-  const { type, link, title, tags } = req.body;
+  const { type, link, title, tags } = req.body
   // res.set("Access-Control-Allow-Origin", "*");
 
   try {
+    await embedAndUpsert({
+      userId: req.userId,
+      type: type,
+      link: link,
+      title: title,
+      tags: tags,
+    })
     const tagIds = await Promise.all(
       tags.map(async (tag: string) => {
-        const tagExists = await Tag.findOne({ name: tag });
+        const tagExists = await Tag.findOne({ name: tag })
         // console.log(typeof tagExists);
         if (tagExists) {
-          return tagExists._id;
+          return tagExists._id
         }
-        const createdTag = await Tag.create({ name: tag });
-        return createdTag._id;
+        const createdTag = await Tag.create({ name: tag })
+        return createdTag._id
       })
-    );
+    )
 
     const result = await Content.create({
       userId: req.userId,
@@ -204,161 +224,161 @@ app.post("/api/v1/content", authMiddleware, async (req, res) => {
       link: link,
       title: title,
       tags: tagIds,
-    });
+    })
     res
       .status(200)
-      .json({ message: "Content added successfully", content: result });
+      .json({ message: 'Content added successfully', content: result })
   } catch (err) {
     // console.log("Error posting contnet", err);
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
+})
 
-app.delete("/api/v1/content", authMiddleware, async (req, res) => {
-  const { linkId } = req.body;
-  console.log("linkId  : ", linkId, " type : ", typeof linkId);
+app.delete('/api/v1/content', authMiddleware, async (req, res) => {
+  const { linkId } = req.body
+  console.log('linkId  : ', linkId, ' type : ', typeof linkId)
   try {
-    const result = await Content.findByIdAndDelete(linkId);
+    const result = await Content.findByIdAndDelete(linkId)
     if (result) {
-      res.status(200).json({ message: "Content deleted successfully" });
-      return;
+      res.status(200).json({ message: 'Content deleted successfully' })
+      return
     }
-    res.status(404).json({ message: "Content not found" });
+    res.status(404).json({ message: 'Content not found' })
   } catch (err) {
-    console.log(err);
+    console.log(err)
 
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
-app.post("/api/v1/brain/share", authMiddleware, async (req, res) => {
-  const { toShare } = req.body;
+})
+app.post('/api/v1/brain/share', authMiddleware, async (req, res) => {
+  const { toShare } = req.body
 
   try {
-    const LinkExists = await ShareLink.findOne({ userId: req.userId });
+    const LinkExists = await ShareLink.findOne({ userId: req.userId })
     if (LinkExists) {
       const changedShareOption = await ShareLink.findOneAndUpdate(
         { userId: req.userId },
         { enableShare: toShare }
-      );
+      )
       const toSend: {
-        message: string;
-        link?: string | null;
-        enableShare?: boolean;
+        message: string
+        link?: string | null
+        enableShare?: boolean
       } = {
-        message: "Share options updated successfully",
+        message: 'Share options updated successfully',
         enableShare: changedShareOption?.enableShare,
-      };
+      }
       // if (changedShareOption?.enableShare) {
-      toSend.link = changedShareOption?.hash;
+      toSend.link = changedShareOption?.hash
 
-      res.status(200).json(toSend);
-      return;
+      res.status(200).json(toSend)
+      return
     }
     const result = await ShareLink.create({
       userId: req.userId,
       hash: await bcrypt.hash(req.userId!, 1),
       enableShare: true,
-    });
+    })
     res
       .status(200)
-      .json({ message: "Link Created successfully", link: result.hash });
+      .json({ message: 'Link Created successfully', link: result.hash })
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
+})
 
-app.get("/api/v1/brain/share", authMiddleware, async (req, res) => {
+app.get('/api/v1/brain/share', authMiddleware, async (req, res) => {
   try {
     const response = await ShareLink.findOne({
       userId: req.userId,
-    });
+    })
     if (response === null) {
-      res.status(404).json({ message: "User link not found" });
-      return;
+      res.status(404).json({ message: 'User link not found' })
+      return
     }
-    res.status(200).json({ shareLink: response?.enableShare });
+    res.status(200).json({ shareLink: response?.enableShare })
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
+})
 
-app.get("/api/v1/brain/:shareLink", async (req, res) => {
-  const { shareLink } = req.params;
-  const page = Number(req.query.page) || 1;
+app.get('/api/v1/brain/:shareLink', async (req, res) => {
+  const { shareLink } = req.params
+  const page = Number(req.query.page) || 1
   try {
     const isLinkActive = await ShareLink.findOne({ hash: shareLink }).populate(
-      "userId",
-      "username"
-    );
+      'userId',
+      'username'
+    )
 
     if (isLinkActive && isLinkActive.enableShare) {
       const totalContents = await Content.countDocuments({
         userId: isLinkActive.userId,
-      });
-      const totalPages = Math.ceil(totalContents / limit);
+      })
+      const totalPages = Math.ceil(totalContents / limit)
       const result = await Content.find({
         userId: isLinkActive.userId,
       })
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
 
       res.status(201).json({
         userDetails: isLinkActive,
         contentsByUser: { totalPages, data: result },
-      });
-      return;
+      })
+      return
     }
-    res.status(404).json({ message: "User not found" });
+    res.status(404).json({ message: 'User not found' })
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
-app.get("/api/v1/tags", authMiddleware, async (req, res) => {
+})
+app.get('/api/v1/tags', authMiddleware, async (req, res) => {
   try {
-    const tags = await Tag.find();
-    res.status(200).json(tags);
+    const tags = await Tag.find()
+    res.status(200).json(tags)
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
+})
 
-app.put("/api/v1/content/:contentId", authMiddleware, async (req, res) => {
-  const { tags, ...toUpdate } = req.body;
-  const { contentId } = req.params;
+app.put('/api/v1/content/:contentId', authMiddleware, async (req, res) => {
+  const { tags, ...toUpdate } = req.body
+  const { contentId } = req.params
   // console.log("Request body:", JSON.stringify(req.body));
   // console.log("User ID from token:", req.userId);
   // console.log("Content ID from params:", req.params.contentId);
   try {
     const tagIds = await Promise.all(
       tags.map(async (tag: string) => {
-        const tagExists = await Tag.findOne({ name: tag });
+        const tagExists = await Tag.findOne({ name: tag })
         if (tagExists) {
-          return tagExists._id;
+          return tagExists._id
         }
-        const createdTag = await Tag.create({ name: tag });
-        return createdTag._id;
+        const createdTag = await Tag.create({ name: tag })
+        return createdTag._id
       })
-    );
+    )
 
     const updated = await Content.findOneAndUpdate(
       { userId: req.userId, _id: contentId },
       { tags: tagIds, ...toUpdate }
-    );
+    )
 
     if (!updated) {
       res
         .status(404)
-        .json({ message: "Content not found or User not logged in" });
-      return;
+        .json({ message: 'Content not found or User not logged in' })
+      return
     }
-    res.status(200).json({ message: "Content details updated" });
+    res.status(200).json({ message: 'Content details updated' })
   } catch (err) {
-    console.error("error updating content info : ", err);
-    res.status(500).json({ message: err });
+    console.error('error updating content info : ', err)
+    res.status(500).json({ message: err })
   }
-});
+})
 
-app.get("/api/v1/mostUsedTags", authMiddleware, async (req, res) => {
+app.get('/api/v1/mostUsedTags', authMiddleware, async (req, res) => {
   try {
     const tagCounts = await Content.aggregate([
       {
@@ -367,11 +387,11 @@ app.get("/api/v1/mostUsedTags", authMiddleware, async (req, res) => {
         },
       },
       {
-        $unwind: "$tags",
+        $unwind: '$tags',
       },
       {
         $group: {
-          _id: "$tags",
+          _id: '$tags',
           totalQuantity: { $sum: 1 },
         },
       },
@@ -383,67 +403,77 @@ app.get("/api/v1/mostUsedTags", authMiddleware, async (req, res) => {
       {
         $limit: 5,
       },
-    ]);
+    ])
 
     const populated = await Promise.all(
       tagCounts.map(async ({ _id, totalQuantity }) => {
-        const tag = await Tag.findById(_id);
+        const tag = await Tag.findById(_id)
         return {
           tagId: _id,
-          tagName: tag?.name || "Unknown",
+          tagName: tag?.name || 'Unknown',
           totalQuantity,
-        };
+        }
       })
-    );
+    )
 
-    res.status(200).json(populated);
+    res.status(200).json(populated)
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err })
   }
-});
-app.get("/api/v1/preview", async (req, res) => {
-  const url = req.query.url as string;
-  let response;
+})
+app.get('/api/v1/preview', async (req, res) => {
+  const url = req.query.url as string
+  let response
   try {
     response = await axios.get(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-    });
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    })
   } catch (err) {
     // console.log("error making get request to url", err);
-    res.status(500).json({ message: "error making get request to url" });
-    return;
+    res.status(500).json({ message: 'error making get request to url' })
+    return
   }
-  const html = response.data;
-  const $ = cheerio.load(html);
+  const html = response.data
+  const $ = cheerio.load(html)
   const title =
-    $("title").text() ||
-    $('meta[name="twitter:title"]').attr("content") ||
-    null;
+    $('title').text() || $('meta[name="twitter:title"]').attr('content') || null
   const description =
-    $('meta[name="description"]').attr("content") ||
-    $('meta[property="og:description"]').attr("content") ||
-    null;
+    $('meta[name="description"]').attr('content') ||
+    $('meta[property="og:description"]').attr('content') ||
+    null
   const img =
-    $('meta[property="og:image"]').attr("content") ||
-    $('meta[name="twitter:image"]').attr("content") ||
-    null;
+    $('meta[property="og:image"]').attr('content') ||
+    $('meta[name="twitter:image"]').attr('content') ||
+    null
 
-  res.status(200).json({ title, description, img });
-});
+  res.status(200).json({ title, description, img })
+})
 
-app.get("/api/v1/userInfo", authMiddleware, async (req, res) => {
+app.get('/api/v1/userInfo', authMiddleware, async (req, res) => {
   try {
     const response = await User.findById(req.userId).select({
       _id: 0,
       password: 0,
-    });
-    res.status(200).json({ role: "user", username: response?.username });
+    })
+    res.status(200).json({ role: 'user', username: response?.username })
   } catch (err) {
-    console.log(err);
-    res.status(401).json({ message: "Error getting info" });
+    console.log(err)
+    res.status(401).json({ message: 'Error getting info' })
   }
-});
+})
+
+app.post('/api/v1/queryInfo', authMiddleware, async (req, res) => {
+  try {
+    const { query } = req.body
+    const result = await embedAndQuery(query)
+    res.json({ result })
+    return
+  } catch (err) {
+    console.log(err)
+    res.status(401).json({ message: 'Error getting info' })
+  }
+})
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log("Listening at port : ", process.env.PORT || 3000);
-});
+  console.log('Listening at port : ', process.env.PORT || 3000)
+})
